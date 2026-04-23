@@ -1,0 +1,52 @@
+CRISP Benchmark 1: TPM Quote Generation Latency
+================================================
+Date       : April 2026
+Platform   : x86-64 Ubuntu 22.04 (sunil@Quantumlabs)
+Backend    : swtpm 0.7 (software TPM emulator)
+Tool       : tpm2-tools 5.4
+TPM handle : 0x81000001
+PCR list   : sha256:0,1,2
+Nonce      : cafebabe
+Iterations : 1,000
+
+Raw Output (terminal):
+-------------------------------------------------
+Running benchmark... (this takes approximately 60 seconds)
+  Completed 100/1000 iterations
+  Completed 200/1000 iterations
+  Completed 300/1000 iterations
+  Completed 400/1000 iterations
+  Completed 500/1000 iterations
+  Completed 600/1000 iterations
+  Completed 700/1000 iterations
+  Completed 800/1000 iterations
+  Completed 900/1000 iterations
+  Completed 1000/1000 iterations
+
+Results:
+  P50 (median)  : 7.1 ms
+  P95           : 8.7 ms  <-- paper headline figure
+  P99           : 9.3 ms
+-------------------------------------------------
+
+Paper Figures Used:
+  Headline figure (P95) : 8.7 ms
+
+Hardware Disclosure:
+  These results are obtained using swtpm (software TPM emulator)
+  and represent a performance lower bound. Dedicated hardware TPMs
+  such as the Infineon SLB 9672 are expected to yield P95 latency
+  in the range of 80 to 180 ms due to SPI bus communication overhead.
+  This disclosure is included in Section VI of the submitted paper.
+
+Reproduction Command Sequence:
+  mkdir -p /tmp/vtpm
+  swtpm socket --tpmstate dir=/tmp/vtpm --tpm2 \
+    --server type=unixio,path=/tmp/vtpm/sock \
+    --ctrl type=unixio,path=/tmp/vtpm/sock.ctrl \
+    --flags not-need-init,startup-clear &
+  sleep 3
+  export TPM2TOOLS_TCTI="swtpm:path=/tmp/vtpm/sock"
+  tpm2_createprimary -C e -c /tmp/vtpm/primary.ctx
+  tpm2_evictcontrol -C o -c /tmp/vtpm/primary.ctx 0x81000001
+  python3 benchmarks/tpm_bench.py
