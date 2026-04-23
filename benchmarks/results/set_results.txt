@@ -1,0 +1,72 @@
+CRISP Benchmark 2: SET Channel Handshake Overhead
+==================================================
+Date        : April 2026
+Platform    : x86-64 Ubuntu 22.04 (sunil@Quantumlabs)
+OpenSSL     : 3.x with OQS provider (liboqs 0.10, oqs-provider 0.7)
+Method      : 100 loopback TLS 1.3 handshakes per variant
+Server      : openssl s_server on localhost:4433
+Variants    : X25519 (baseline) vs. X25519MLKEM768 (PQ-hybrid)
+
+Raw Output (terminal):
+-------------------------------------------------
+CRISP Benchmark 2: SET Channel Handshake Overhead
+Platform : x86-64 Ubuntu 22.04
+Server   : localhost:4433 (loopback)
+Provider : OQS provider
+
+Running Baseline X25519 (100 handshakes)...
+  Completed 25/100
+  Completed 50/100
+  Completed 75/100
+  Completed 100/100
+
+Running PQ-Hybrid X25519MLKEM768 (100 handshakes)...
+  Completed 25/100
+  Completed 50/100
+  Completed 75/100
+  Completed 100/100
+
+Results:
+  Baseline X25519:
+    P50 : 49.0 ms
+    P95 : 52.4 ms
+    Mean: 49.3 ms
+
+  PQ-Hybrid X25519MLKEM768:
+    P50 : 52.1 ms
+    P95 : 64.1 ms
+    Mean: 52.8 ms
+
+  SET Overhead (paper headline figures):
+    P50 delta : 3.1 ms
+    P95 delta : 11.6 ms  <-- paper headline figure
+-------------------------------------------------
+
+Paper Figures Used:
+  Baseline TLS 1.3 P95      : 52.4 ms
+  X25519MLKEM768 P95        : 64.1 ms
+  SET overhead P95 (delta)  : 11.6 ms
+
+Combined Overhead to Date (SA + SET):
+  SA P95   :  8.7 ms  (swtpm lower bound)
+  SET P95  : 11.6 ms  (x86-64 loopback)
+  Total    : 20.3 ms  of 47 ms end-to-end target
+  Remaining: 26.7 ms  budget for ZKBV on target hardware
+
+Hardware Disclosure:
+  Results are from loopback (localhost) measurement on x86-64 hardware.
+  ARM Cortex-A76 class devices are expected to exhibit 1.5 to 2 times
+  higher absolute latency, with a proportionally similar overhead delta
+  (estimated 17 to 23 ms at P95). This disclosure is included in
+  Section VI of the submitted paper.
+
+Server Command Used:
+  openssl s_server \
+    -provider-path /usr/lib/x86_64-linux-gnu/ossl-modules \
+    -provider oqsprovider -provider default \
+    -cert ~/cert.pem -key ~/key.pem \
+    -port 4433 -tls1_3 \
+    -groups X25519MLKEM768:X25519
+
+Reproduction:
+  See benchmarks/set_bench.py for the full client-side script.
