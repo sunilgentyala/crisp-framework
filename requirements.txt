@@ -1,0 +1,16 @@
+# CRISP Framework — Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core scientific stack (BEM entropy analysis)
+numpy>=1.26.0
+scipy>=1.12.0
+
+# Image processing (BEM frame loading)
+Pillow>=10.0.0
+
+# Optional: faster FFT backend for BEM
+# pyfftw>=0.13.0  # Uncomment if available; falls back to numpy.fft
+
+# Development / testing
+pytest>=8.0.0
+pytest-cov>=4.0.0
