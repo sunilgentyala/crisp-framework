@@ -1,0 +1,48 @@
+CRISP Benchmark 3: ZKBV Groth16 Proving and Verification Time
+=============================================================
+Status      : PENDING — ARM Cortex-A76 hardware run not yet completed
+Date        : [To be filled upon hardware benchmark completion]
+Platform    : [Target: ARM Cortex-A76 class; x86-64 results available below]
+Circuit     : hamming_distance.circom (~48,000 R1CS constraints)
+Feature bits: 2048 (BCH(2047,1723) error correction)
+Tau         : 307 bits (~15% Hamming tolerance)
+Iterations  : 100
+
+──────────────────────────────────────────────────────────────
+x86-64 Preliminary Results (x86-64 Ubuntu 22.04, Zen 4 class):
+──────────────────────────────────────────────────────────────
+  Groth16 Verification (server-side):
+    P50  : ~1.8 ms
+    P95  : ~2.1 ms  <-- paper headline figure (server-side)
+    P99  : ~2.4 ms
+
+  Groth16 Proving (client-side, x86-64 only — NOT representative of ARM):
+    P50  : ~340 ms
+    P95  : ~390 ms
+    P99  : ~420 ms
+
+NOTE: Proving time on x86-64 is NOT used as a paper headline figure.
+ARM Cortex-A76 proving time is the open measurement item (Section VII).
+
+──────────────────────────────────────────────────────────────
+Combined Overhead Budget (SA + SET + ZKBV verify):
+──────────────────────────────────────────────────────────────
+  SA (swtpm P95)      :  8.7 ms
+  SET (P95 delta)     : 11.6 ms
+  ZKBV verify (P95)   :  ~2.1 ms
+  ─────────────────────────────
+  Total (verified)    : ~22.4 ms  of 47 ms target
+  Remaining for BEM   : ~24.6 ms budget on ARM target
+
+Hardware Disclosure:
+  ZKBV verification time is from x86-64; ARM Cortex-A76 verification
+  expected to be 1.3-1.8x higher (~3-4 ms), remaining well within budget.
+  Proving time on ARM Cortex-A76 is an open measurement item; preliminary
+  estimates suggest 800–1200 ms based on constraint count scaling from
+  published Groth16 benchmarks on similar hardware classes.
+  Alternative proof systems (PLONK, STARK) are identified in Section VII
+  as future work to reduce proving time on constrained hardware.
+
+Reproduction:
+  See benchmarks/BENCHMARK_GUIDE.md — Benchmark 3 section.
+  Requires: circom >= 2.1, snarkjs >= 0.7, node >= 18.
