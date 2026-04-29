@@ -1,19 +1,30 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite as below."
 authors:
-  - family-names: "[Your Last Name]"
-    given-names: "[Your First Name]"
+  - family-names: "Gentyala"
+    given-names: "Sunil"
     orcid: "https://orcid.org/0009-0005-2642-3479"
 title: "CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance"
 version: 1.0.0-ieee-submission
 date-released: 2026-04-22
 url: "https://github.com/sunilgentyala/crisp-framework"
+license: MIT
+keywords:
+  - biometric security
+  - deepfake detection
+  - injection attack
+  - zero-knowledge proof
+  - TPM attestation
+  - post-quantum cryptography
+  - eKYC
 preferred-citation:
   type: article
   authors:
-    - family-names: "[Your Last Name]"
-      given-names: "[Your First Name]"
+    - family-names: "Gentyala"
+      given-names: "Sunil"
+      orcid: "https://orcid.org/0009-0005-2642-3479"
   title: "The Weaponization of Deepfakes: A Novel Cryptographic Framework Mitigating Biometric Injection and Identity Gaps"
   journal: "IEEE Transactions on Information Forensics and Security"
   year: 2026
-  notes: "Submitted"
+  notes: "Submitted April 2026"
+  url: "https://github.com/sunilgentyala/crisp-framework"
