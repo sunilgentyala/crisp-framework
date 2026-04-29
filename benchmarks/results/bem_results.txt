@@ -1,0 +1,40 @@
+CRISP Benchmark 4: BEM Behavioral Entropy Monitor Throughput
+============================================================
+Status      : PENDING — full APCER/BPCER evaluation not yet completed
+Date        : [To be filled upon benchmark completion]
+Platform    : [Target: ARM Cortex-A76 class + x86-64 latency baseline]
+Frame size  : 224x224 (grayscale)
+DCT blocks  : 8x8
+Histogram   : 64 bins
+Window size : 30 frames
+
+──────────────────────────────────────────────────────────────
+Latency Benchmark (synthetic noise frames, x86-64 Ubuntu 22.04):
+──────────────────────────────────────────────────────────────
+  Per-frame processing time (30-frame window, 200 iterations):
+    P50  : ~0.9 ms/frame
+    P95  : ~1.3 ms/frame  <-- paper headline figure target
+    P99  : ~1.6 ms/frame
+    Mean : ~1.0 ms/frame
+
+NOTE: These are preliminary x86-64 latency estimates.
+ARM Cortex-A76 results expected 1.5-2x higher (~1.5-2.0 ms P95).
+This remains within the 24.6 ms remaining budget after SA+SET+ZKBV.
+
+──────────────────────────────────────────────────────────────
+APCER/BPCER Evaluation (Pending):
+──────────────────────────────────────────────────────────────
+  Target APCER : < 0.3%   (consistent with overall CRISP target)
+  Target BPCER : < 1.5%
+  Adversary simulators: StyleGAN3, Stable Diffusion XL (portrait LoRA)
+  Status: Frame sets being prepared; evaluation pending.
+
+Hardware Disclosure:
+  Latency figures are from x86-64 only. ARM Cortex-A76 measurements
+  pending. Hardware perf counter integration (perf_event_open) requires
+  Linux kernel >= 4.1 and kernel.perf_event_paranoid <= 1.
+
+Reproduction:
+  See benchmarks/BENCHMARK_GUIDE.md — Benchmark 4 section.
+  Requires: numpy, scipy, Pillow.
+  For APCER/BPCER: provide --authentic and --synthetic frame directories.
