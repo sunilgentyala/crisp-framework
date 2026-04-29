@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+venv/
+.venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# Node / snarkjs
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# ZK artifacts (large, reproducible from setup)
+*.ptau
+pot18_*.ptau
+*.r1cs
+*_js/
+*.sym
+*.wasm
+*_0000.zkey
+*_final.zkey
+verification_key.json
+
+# Crypto / secrets — never commit private keys or TPM seeds
+*.pem
+*.key
+*.p12
+*.pfx
+key.pem
+cert.pem
+primary.ctx
+/tmp/
+
+# TPM state
+/tmp/vtpm/
+*.ctx
+
+# Benchmark temp outputs
+proof.json
+public.json
+witness.wtns
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+*.code-workspace
+
+# Coverage / test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
