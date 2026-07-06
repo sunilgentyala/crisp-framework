@@ -5,7 +5,7 @@ authors:
     given-names: "Sunil"
     orcid: "https://orcid.org/0009-0005-2642-3479"
 title: "CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance"
-version: 1.0.0-ieee-submission
+version: 1.0.0
 date-released: 2026-04-22
 url: "https://github.com/sunilgentyala/crisp-framework"
 license: MIT
@@ -18,13 +18,12 @@ keywords:
   - post-quantum cryptography
   - eKYC
 preferred-citation:
-  type: article
+  type: unpublished
   authors:
     - family-names: "Gentyala"
       given-names: "Sunil"
       orcid: "https://orcid.org/0009-0005-2642-3479"
   title: "The Weaponization of Deepfakes: A Novel Cryptographic Framework Mitigating Biometric Injection and Identity Gaps"
-  journal: "IEEE Transactions on Information Forensics and Security"
   year: 2026
-  notes: "Submitted April 2026"
+  notes: "Manuscript under review"
   url: "https://github.com/sunilgentyala/crisp-framework"

@@ -1,7 +1,7 @@
 
 # crisp-framework# CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance
 
-[![Paper Status](https://img.shields.io/badge/IEEE_TIFS-Under_Review-blue)](https://github.com/sunilgentyala/crisp-framework/blob/main/PAPER_STATUS.md)
+[![Paper Status](https://img.shields.io/badge/Paper-Under_Review-blue)](https://github.com/sunilgentyala/crisp-framework/blob/main/PAPER_STATUS.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue)](https://www.python.org/)
 
@@ -12,7 +12,7 @@
 This repository accompanies the paper:
 
 > **The Weaponization of Deepfakes: A Novel Cryptographic Framework Mitigating Biometric Injection and Identity Gaps**  
-> *Submitted to IEEE Transactions on Information Forensics and Security (IEEE TIFS), April 2026.*
+> *Under review.*
 
 CRISP is a four-component cryptographic framework that closes the hardware-to-authentication chain-of-trust gap exploited by OS-level biometric injection attacks — a class of attack that bypasses every existing liveness and presentation-attack detection mechanism by impersonating the camera itself rather than spoofing it.
 
@@ -168,14 +168,13 @@ Adv_BIA(A, λ) ≤ Adv_ECDSA(A) + Adv_ZK-Sound(A) + ε_BEM + negl(λ)
 ## Paper Citation
 
 ```bibtex
-@article{gentyala2026crisp,
-  author  = {Gentyala, Sunil},
-  title   = {The Weaponization of Deepfakes: A Novel Cryptographic Framework
-             Mitigating Biometric Injection and Identity Gaps},
-  journal = {IEEE Transactions on Information Forensics and Security},
-  year    = {2026},
-  note    = {Submitted},
-  url     = {https://github.com/sunilgentyala/crisp-framework}
+@unpublished{gentyala2026crisp,
+  author = {Gentyala, Sunil},
+  title  = {The Weaponization of Deepfakes: A Novel Cryptographic Framework
+            Mitigating Biometric Injection and Identity Gaps},
+  year   = {2026},
+  note   = {Manuscript under review},
+  url    = {https://github.com/sunilgentyala/crisp-framework}
 }
 ```
 
