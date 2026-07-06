@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgMain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e14"/>
+      <stop offset="100%" style="stop-color:#141b2e"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3fd7c2"/>
+      <stop offset="100%" style="stop-color:#2fb8d9"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="18%" cy="35%" r="55%">
+      <stop offset="0%" style="stop-color:#ff5470;stop-opacity:0.14"/>
+      <stop offset="100%" style="stop-color:#ff5470;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="82%" cy="65%" r="50%">
+      <stop offset="0%" style="stop-color:#3fd7c2;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#3fd7c2;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="2.5"/></filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bgMain)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <g opacity="0.05" stroke="#3fd7c2" stroke-width="1">
+    <line x1="0" y1="105" x2="1200" y2="105"/>
+    <line x1="0" y1="210" x2="1200" y2="210"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/>
+    <line x1="0" y1="525" x2="1200" y2="525"/>
+    <line x1="200" y1="0" x2="200" y2="630"/>
+    <line x1="400" y1="0" x2="400" y2="630"/>
+    <line x1="800" y1="0" x2="800" y2="630"/>
+    <line x1="1000" y1="0" x2="1000" y2="630"/>
+  </g>
+
+  <!-- shield + fingerprint mark -->
+  <g transform="translate(95, 175)">
+    <path d="M100 0 L172 26 V95 C172 132 141 160 100 178 C59 160 28 132 28 95 V26 Z"
+          fill="none" stroke="url(#ring)" stroke-width="7" stroke-linejoin="round" filter="url(#blur)"/>
+    <g fill="none" stroke="#ff5470" stroke-width="5" stroke-linecap="round">
+      <path d="M65 95 C65 60 135 60 135 95"/>
+      <path d="M78 108 C78 76 122 76 122 108"/>
+      <path d="M91 118 C91 100 109 100 109 118"/>
+    </g>
+    <circle cx="100" cy="50" r="6" fill="#ff5470"/>
+  </g>
+
+  <text x="330" y="255" font-family="'Segoe UI', Arial, sans-serif" font-size="92" font-weight="700" fill="white" letter-spacing="-2">CRISP</text>
+  <text x="330" y="308" font-family="'Segoe UI', Arial, sans-serif" font-size="27" fill="#93a1b0" letter-spacing="0.3">Cryptographic Root-of-trust Identity and Sensor Provenance</text>
+  <text x="330" y="348" font-family="'Segoe UI', Arial, sans-serif" font-size="22" fill="#6b7a89">Closing the chain-of-trust gap behind biometric injection attacks</text>
+
+  <g transform="translate(330, 385)">
+    <rect x="0" y="0" width="120" height="42" rx="21" fill="rgba(63,215,194,0.13)" stroke="#3fd7c2" stroke-width="1"/>
+    <text x="60" y="27" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#8fe8da" text-anchor="middle">SA</text>
+    <rect x="136" y="0" width="120" height="42" rx="21" fill="rgba(47,184,217,0.13)" stroke="#2fb8d9" stroke-width="1"/>
+    <text x="196" y="27" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#8fd4ea" text-anchor="middle">SET</text>
+    <rect x="272" y="0" width="130" height="42" rx="21" fill="rgba(255,84,112,0.13)" stroke="#ff5470" stroke-width="1"/>
+    <text x="337" y="27" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#ffb1bf" text-anchor="middle">ZKBV</text>
+    <rect x="418" y="0" width="130" height="42" rx="21" fill="rgba(147,161,176,0.13)" stroke="#93a1b0" stroke-width="1"/>
+    <text x="483" y="27" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#c7d0d9" text-anchor="middle">BEM</text>
+  </g>
+
+  <rect x="0" y="620" width="1200" height="4" fill="url(#ring)" opacity="0.7"/>
+  <circle cx="1140" cy="70" r="3" fill="#ff5470" opacity="0.5"/>
+  <circle cx="1120" cy="90" r="2" fill="#3fd7c2" opacity="0.4"/>
+  <circle cx="1160" cy="100" r="2.5" fill="#2fb8d9" opacity="0.4"/>
+</svg>

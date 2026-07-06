@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRISP | Cryptographic Root-of-trust Identity and Sensor Provenance</title>
+<meta name="description" content="CRISP is a four-component cryptographic framework — TPM sensor attestation, post-quantum hybrid telemetry, zero-knowledge biometric verification, and entropy-based anomaly detection — that closes the chain-of-trust gap exploited by OS-level biometric injection attacks.">
+<meta property="og:title" content="CRISP - Cryptographic Root-of-trust Identity and Sensor Provenance"/>
+<meta property="og:description" content="A four-component cryptographic framework closing the hardware-to-authentication chain-of-trust gap exploited by OS-level biometric injection attacks."/>
+<meta property="og:image" content="og-image.svg"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="CRISP"/>
+<meta name="twitter:description" content="TPM attestation + PQ-hybrid channels + ZK biometric verification + entropy detection, closing the biometric injection attack gap.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --bg-alt: #10151d;
+    --card: #131920;
+    --border: #212a35;
+    --text: #e6edf3;
+    --muted: #93a1b0;
+    --accent: #ff5470;
+    --accent-2: #3fd7c2;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  a { color: var(--accent-2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  header.hero {
+    padding: 90px 0 60px;
+    background: radial-gradient(circle at 18% 20%, rgba(255,84,112,0.12), transparent 45%),
+                radial-gradient(circle at 82% 0%, rgba(63,215,194,0.12), transparent 40%);
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    border: 1px solid rgba(63,215,194,0.4);
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 2.6rem;
+    margin: 0 0 14px;
+    line-height: 1.15;
+  }
+  h1 span { color: var(--accent); }
+  .lede {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 720px;
+    margin: 0 0 30px;
+  }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .btn-primary { background: var(--accent-2); color: #06231f; }
+  .btn-primary:hover { background: #6fe8d8; text-decoration: none; }
+  .btn-secondary { border: 1px solid var(--border); color: var(--text); }
+  .btn-secondary:hover { border-color: var(--accent-2); text-decoration: none; }
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  h2 {
+    font-size: 1.6rem;
+    margin: 0 0 10px;
+  }
+  .section-sub { color: var(--muted); margin: 0 0 30px; max-width: 700px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .card h3 {
+    margin: 0 0 8px;
+    font-size: 1.02rem;
+    color: var(--text);
+  }
+  .card .blocks {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    color: var(--accent);
+    background: rgba(255,84,112,0.1);
+    border: 1px solid rgba(255,84,112,0.3);
+    border-radius: 999px;
+    padding: 2px 9px;
+    margin-bottom: 10px;
+  }
+  .card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+  .why-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .why-list li {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px 18px;
+    color: var(--muted);
+  }
+  .why-list li strong { color: var(--text); }
+
+  pre {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    color: #c8d3dd;
+  }
+  code {
+    background: rgba(63,215,194,0.12);
+    color: var(--accent-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+
+  .pipeline {
+    font-size: 0.8rem;
+    color: #c8d3dd;
+    line-height: 1.55;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  th { color: var(--accent-2); font-weight: 600; }
+  td { color: var(--muted); }
+  td:first-child, th:first-child { color: var(--text); }
+  .table-wrap { overflow-x: auto; }
+  .status-ok { color: var(--accent-2); }
+  .status-pending { color: var(--muted); }
+
+  .disclosure {
+    font-size: 0.85rem;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+  }
+
+  .cite {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  footer {
+    padding: 40px 0 60px;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--muted); }
+  footer a:hover { color: var(--accent-2); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Submitted to IEEE TIFS &middot; April 2026</span>
+    <h1>Closing the chain-of-trust gap behind <span>biometric injection attacks</span></h1>
+    <p class="lede">
+      CRISP (Cryptographic Root-of-trust Identity and Sensor Provenance) is a four-component
+      framework that anchors biometric authentication to attested physical hardware. OS-level
+      injection tools — v4l2loopback, OBS Virtual Camera, LD_PRELOAD hooks — insert synthetic
+      deepfake video upstream of every liveness and presentation-attack check that exists today.
+      CRISP verifies the sensor itself, not just the stream it produces.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://github.com/sunilgentyala/crisp-framework">View on GitHub</a>
+      <a class="btn btn-secondary" href="https://github.com/sunilgentyala/crisp-framework/blob/main/PAPER_STATUS.md">Paper Status</a>
+      <a class="btn btn-secondary" href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/BENCHMARK_GUIDE.md">Benchmark Guide</a>
+    </div>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <h2>The problem</h2>
+    <p class="section-sub">Modern biometric authentication assumes sensor input can be trusted. It cannot.</p>
+    <ul class="why-list">
+      <li><strong>Injection bypasses PAD by design.</strong> Virtual-camera drivers and userspace hooks insert synthetic video directly into the OS media pipeline, upstream of every presentation-attack-detection and liveness check &mdash; ISO/IEC 30107-3 compliance offers zero protection against this attack class.</li>
+      <li><strong>The attack is surging.</strong> Injection attacks grew 9&times; year-over-year through 2024, as deepfake generation tools became commodity software.</li>
+      <li><strong>Spoofing the camera, not the face.</strong> These attacks impersonate the sensor itself rather than presenting a fake face to a real camera, which is the one thing liveness detection was never designed to catch.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="architecture">
+  <div class="wrap">
+    <h2>CRISP architecture</h2>
+    <p class="section-sub">Four independent components sit between the physical sensor and the authentication decision. A stream is accepted only if all four pass.</p>
+    <pre class="pipeline"><code>Physical Sensor Hardware  &#9472;&#9472;[SHA-256 frame hash + session nonce]&#9472;&#9472;&#9656;
+    &#9474;
+    &#9660;
+SA:   TPM 2.0 Sensor Attestation          &#8592; Blocks driver injection (AC-2)
+    &#9474;   AIK-signed PCR quote                 Blocks virtual camera (AC-3)
+    &#9660;
+SET:  Post-Quantum Hybrid Telemetry       &#8592; Blocks SDK hook / LD_PRELOAD (AC-4)
+    &#9474;   X25519MLKEM768 + AES-256-GCM
+    &#9660;
+ZKBV: Zero-Knowledge Biometric Verify     &#8592; Template unlinkability, no replay
+    &#9474;   Groth16 / BCH(2047,1723) fuzzy commit
+    &#9660;
+BEM:  Behavioral Entropy Monitor          &#8592; Synthetic-stream anomaly detection
+    &#9474;   KL-divergence + spectral flatness
+    &#9660;
+Authentication Decision Module            &#8592; ACCEPT only if all four pass</code></pre>
+
+    <div class="grid" style="margin-top: 24px;">
+      <div class="card">
+        <span class="blocks">Blocks AC-2, AC-3</span>
+        <h3>SA &middot; Sensor Attestation</h3>
+        <p>TPM 2.0-anchored attestation binds every frame to a hardware root of trust via an AIK-signed PCR quote, proving the data came from the physical sensor and not a driver-level or virtual-camera injection.</p>
+      </div>
+      <div class="card">
+        <span class="blocks">Blocks AC-4</span>
+        <h3>SET &middot; Secure Telemetry</h3>
+        <p>An X25519MLKEM768 post-quantum hybrid handshake plus AES-256-GCM protects the sensor-to-verifier channel, closing off SDK hooking and LD_PRELOAD interception even against a future quantum adversary.</p>
+      </div>
+      <div class="card">
+        <span class="blocks">Template unlinkability</span>
+        <h3>ZKBV &middot; ZK Biometric Verify</h3>
+        <p>A Groth16 zkSNARK over a BCH(2047,1723) fuzzy commitment proves a biometric match without ever transmitting the underlying template, eliminating replay and cross-database linkability.</p>
+      </div>
+      <div class="card">
+        <span class="blocks">Novel synthesis variants</span>
+        <h3>BEM &middot; Entropy Monitor</h3>
+        <p>KL-divergence and spectral-flatness analysis over the live stream catch synthetic-generation artifacts that attestation and channel security alone can't &mdash; the last line of defense against novel deepfake variants.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="benchmarks">
+  <div class="wrap">
+    <h2>Benchmark results</h2>
+    <div class="disclosure">
+      <strong>Disclosure:</strong> SA results use swtpm 0.7 (software emulator) &mdash; a performance <em>lower bound</em>. Dedicated hardware TPMs (Infineon SLB 9672) are expected to yield 80&ndash;180 ms P95 due to SPI bus overhead. SET results are from x86-64 loopback; ARM Cortex-A76 is expected to run 1.5&ndash;2&times; higher.
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Component</th><th>Metric</th><th>Platform</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>SA</td><td>TPM quote P95</td><td>x86-64, swtpm 0.7</td><td class="status-ok">8.7 ms</td></tr>
+          <tr><td>SA</td><td>TPM quote P95 (hardware est.)</td><td>Infineon SLB 9672</td><td>80&ndash;180 ms</td></tr>
+          <tr><td>SET</td><td>Handshake overhead P95 &Delta;</td><td>x86-64 loopback</td><td class="status-ok">11.6 ms</td></tr>
+          <tr><td>SA + SET combined</td><td>Total overhead P95</td><td>x86-64</td><td class="status-ok">20.3 ms</td></tr>
+          <tr><td>ZKBV</td><td>Groth16 proving time</td><td>ARM Cortex-A76</td><td class="status-pending">Pending</td></tr>
+          <tr><td>ZKBV</td><td>Groth16 verification time</td><td>x86-64</td><td class="status-ok">~2 ms</td></tr>
+          <tr><td>BEM</td><td>Throughput</td><td>&mdash;</td><td class="status-pending">Pending</td></tr>
+          <tr><td>End-to-end</td><td>Auth latency target (P95)</td><td>ARM Cortex-A76</td><td>&lt; 47 ms target</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-sub" style="margin-top: 20px;">Remaining overhead budget: 47&nbsp;ms &minus; 20.3&nbsp;ms = <strong style="color: var(--text);">26.7 ms</strong> for ZKBV + BEM on the ARM target.</p>
+  </div>
+</section>
+
+<section id="security">
+  <div class="wrap">
+    <h2>Security properties</h2>
+    <p class="section-sub">Formal guarantees underpinning the framework, with their cryptographic reduction.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Property</th><th>Definition</th><th>Reduction</th></tr></thead>
+        <tbody>
+          <tr><td>Sensor Binding (SG-1)</td><td>Auth module can verify data came from an attested physical sensor</td><td>ECDSA unforgeability</td></tr>
+          <tr><td>Template Unlinkability (SG-2)</td><td>No biometric template traverses any external boundary</td><td>DDH over Groth16 bilinear group</td></tr>
+          <tr><td>Injection Resistance (SG-3)</td><td>No PPT adversary causes acceptance of a fabricated stream except with negligible probability</td><td>Theorem 1 (ROM)</td></tr>
+          <tr><td>Freshness (SG-4)</td><td>Attestation quotes are bound to session nonces; no replay</td><td>Nonce uniqueness</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <pre style="margin-top: 20px;"><code>Adv_BIA(A, &lambda;) &le; Adv_ECDSA(A) + Adv_ZK-Sound(A) + &epsilon;_BEM + negl(&lambda;)</code></pre>
+  </div>
+</section>
+
+<section id="start">
+  <div class="wrap">
+    <h2>Quick start</h2>
+    <p class="section-sub">Reproduce the SA (TPM attestation) benchmark. See the <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/BENCHMARK_GUIDE.md">Benchmark Guide</a> for SET, ZKBV, and full prerequisites.</p>
+    <pre><code>sudo apt install -y swtpm tpm2-tools python3-pip
+pip install -r requirements.txt
+
+mkdir -p /tmp/vtpm
+swtpm socket --tpmstate dir=/tmp/vtpm --tpm2 \
+  --server type=unixio,path=/tmp/vtpm/sock \
+  --ctrl type=unixio,path=/tmp/vtpm/sock.ctrl \
+  --flags not-need-init,startup-clear &
+
+export TPM2TOOLS_TCTI="swtpm:path=/tmp/vtpm/sock"
+tpm2_createprimary -C e -c /tmp/vtpm/primary.ctx
+tpm2_evictcontrol -C o -c /tmp/vtpm/primary.ctx 0x81000001
+
+python3 benchmarks/tpm_bench.py</code></pre>
+  </div>
+</section>
+
+<section id="cite">
+  <div class="wrap">
+    <h2>Citation</h2>
+    <div class="cite">
+      <pre style="margin: 0; border: none; background: none; padding: 0;"><code>@article{gentyala2026crisp,
+  author  = {Gentyala, Sunil},
+  title   = {The Weaponization of Deepfakes: A Novel Cryptographic Framework
+             Mitigating Biometric Injection and Identity Gaps},
+  journal = {IEEE Transactions on Information Forensics and Security},
+  year    = {2026},
+  note    = {Submitted},
+  url     = {https://github.com/sunilgentyala/crisp-framework}
+}</code></pre>
+      <br>
+      Or see <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/CITATION.cff">CITATION.cff</a> for CFF format.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    CRISP &middot; MIT License &middot; Sunil Gentyala, HCLTECH (HCL America Inc.) &middot;
+    <a href="https://github.com/sunilgentyala/crisp-framework">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>

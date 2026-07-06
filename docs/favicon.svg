@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1219"/>
+      <stop offset="100%" stop-color="#151b23"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3fd7c2"/>
+      <stop offset="100%" stop-color="#2fb8d9"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- shield -->
+  <path d="M32 8 L50 15 V30 C50 42 42.5 50.5 32 55 C21.5 50.5 14 42 14 30 V15 Z"
+        fill="none" stroke="url(#ring)" stroke-width="3" stroke-linejoin="round"/>
+  <!-- fingerprint arcs -->
+  <g fill="none" stroke="#ff5470" stroke-width="2" stroke-linecap="round">
+    <path d="M23 33 C23 24 41 24 41 33"/>
+    <path d="M26.5 36 C26.5 27.5 37.5 27.5 37.5 36"/>
+    <path d="M30 38.5 C30 32 34 32 34 38.5"/>
+  </g>
+  <circle cx="32" cy="20" r="2.1" fill="#ff5470"/>
+</svg>
