@@ -281,7 +281,7 @@ Authentication Decision Module            &#8592; ACCEPT only if all four pass</
   <div class="wrap">
     <h2>Benchmark results</h2>
     <div class="disclosure">
-      <strong>Disclosure:</strong> SA results use swtpm 0.7 (software emulator) &mdash; a performance <em>lower bound</em>. Dedicated hardware TPMs (Infineon SLB 9672) are expected to yield 80&ndash;180 ms P95 due to SPI bus overhead. SET results are from x86-64 loopback; ARM Cortex-A76 is expected to run 1.5&ndash;2&times; higher.
+      <strong>Disclosure:</strong> SA results use swtpm 0.7 (software emulator) &mdash; a performance <em>lower bound</em>. Dedicated hardware TPMs (Infineon SLB 9672) are expected to yield 80&ndash;180 ms P95 due to SPI bus overhead. SET results are from x86-64 loopback; ARM Cortex-A76 is expected to run 1.5&ndash;2&times; higher. SA/SET rejection and BEM APCER/BPCER below are <em>measured</em> against the real (not mocked) implementation &mdash; see <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/sa_rejection_test.py">sa_rejection_test.py</a> and <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/prepare_bem_dataset.py">prepare_bem_dataset.py</a>. BEM's APCER/BPCER figure is a small-sample result (15 base images / 29 sliding windows per class, LFW vs. OpenRL/DeepFakeFace) confirming real separating signal, not a population-scale deployment estimate.
     </div>
     <div class="table-wrap">
       <table>
@@ -289,16 +289,19 @@ Authentication Decision Module            &#8592; ACCEPT only if all four pass</
         <tbody>
           <tr><td>SA</td><td>TPM quote P95</td><td>x86-64, swtpm 0.7</td><td class="status-ok">8.7 ms</td></tr>
           <tr><td>SA</td><td>TPM quote P95 (hardware est.)</td><td>Infineon SLB 9672</td><td>80&ndash;180 ms</td></tr>
+          <tr><td>SA/SET</td><td>Real attack rejection (AC-2/3/4)</td><td>x86-64, swtpm</td><td class="status-ok">0/60 forgeries accepted</td></tr>
+          <tr><td>SA</td><td>Bona fide acceptance (BPCER)</td><td>x86-64, swtpm</td><td class="status-ok">20/20</td></tr>
           <tr><td>SET</td><td>Handshake overhead P95 &Delta;</td><td>x86-64 loopback</td><td class="status-ok">11.6 ms</td></tr>
           <tr><td>SA + SET combined</td><td>Total overhead P95</td><td>x86-64</td><td class="status-ok">20.3 ms</td></tr>
           <tr><td>ZKBV</td><td>Groth16 proving time</td><td>ARM Cortex-A76</td><td class="status-pending">Pending</td></tr>
           <tr><td>ZKBV</td><td>Groth16 verification time</td><td>x86-64</td><td class="status-ok">~2 ms</td></tr>
-          <tr><td>BEM</td><td>Throughput</td><td>&mdash;</td><td class="status-pending">Pending</td></tr>
+          <tr><td>BEM</td><td>Per-frame latency P95</td><td>x86-64 (WSL2)</td><td class="status-ok">10.05 ms</td></tr>
+          <tr><td>BEM</td><td>APCER / BPCER (D-EER)</td><td>LFW vs. OpenRL/DeepFakeFace</td><td class="status-ok">0.00% / 0.00% (n=29/class)</td></tr>
           <tr><td>End-to-end</td><td>Auth latency target (P95)</td><td>ARM Cortex-A76</td><td>&lt; 47 ms target</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="section-sub" style="margin-top: 20px;">Remaining overhead budget: 47&nbsp;ms &minus; 20.3&nbsp;ms = <strong style="color: var(--text);">26.7 ms</strong> for ZKBV + BEM on the ARM target.</p>
+    <p class="section-sub" style="margin-top: 20px;">Measured serial total so far (SA + SET + ZKBV verify + BEM) is <strong style="color: var(--text);">~32.4 ms</strong> of the 47&nbsp;ms end-to-end target on x86-64 &mdash; a much smaller margin than an earlier unverified BEM estimate (~1.3&nbsp;ms) implied. Treat the 47&nbsp;ms target as <strong style="color: var(--text);">at risk</strong> pending ARM Cortex-A76 measurement of all four components, not comfortably met.</p>
   </div>
 </section>
 
