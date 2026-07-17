@@ -90,8 +90,21 @@ class SensorProvisioner:
 
         env = {**os.environ, "TPM2TOOLS_TCTI": self.tcti}
 
+        # TPM 2.0 implementations (including swtpm and many discrete hardware
+        # TPMs) guarantee only a small number of transient object slots
+        # (spec minimum is 3). Flush any leftover transient objects from a
+        # prior session before provisioning to avoid TPM_RC_OBJECT_MEMORY.
+        self._run(["tpm2_flushcontext", "-t"], env, check=False)
+
         # Step 1: Create primary key
         self._run(["tpm2_createprimary", "-C", "e", "-c", primary_ctx], env)
+
+        # Each context-file-backed tool invocation below is a fresh TCTI
+        # connection: it reloads primary_ctx into a NEW transient slot and
+        # does not flush it on exit. With only TPM2_PT_HR_TRANSIENT_MIN (3)
+        # slots guaranteed, three unflushed reloads exhaust them before the
+        # AIK itself can be loaded — so flush between every step.
+        self._run(["tpm2_flushcontext", "-t"], env, check=False)
 
         # Step 2: Create AIK under primary
         self._run([
@@ -102,6 +115,7 @@ class SensorProvisioner:
             "-r", str(out / "aik.priv"),
             "--attributes", "fixedtpm|fixedparent|sensitivedataorigin|userwithauth|sign",
         ], env)
+        self._run(["tpm2_flushcontext", "-t"], env, check=False)
 
         # Step 3: Load and persist AIK
         self._run([
@@ -113,6 +127,7 @@ class SensorProvisioner:
             "tpm2_evictcontrol", "-C", "o",
             "-c", aik_ctx, self.tpm_handle,
         ], env)
+        self._run(["tpm2_flushcontext", "-t"], env, check=False)
 
         # Step 4: Generate self-signed AIK certificate (demo/CI mode)
         # Production: replace with CA-signed cert from your PKI

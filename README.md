@@ -65,12 +65,15 @@ crisp-framework/
 │   ├── tpm_bench.py             # SA: TPM quote generation latency
 │   ├── set_bench.py             # SET: PQ-hybrid handshake overhead
 │   ├── zkbv_bench.py            # ZKBV: Groth16 proving + verification time
-│   ├── bem_bench.py             # BEM: entropy monitor throughput
+│   ├── bem_bench.py             # BEM: entropy monitor throughput + real APCER/BPCER
+│   ├── prepare_bem_dataset.py   # Downloads real authentic/synthetic frame sets for BEM
+│   ├── sa_rejection_test.py     # SA/SET: real protocol-level attack rejection test
 │   └── results/
-│       ├── tpm_results.txt      # SA results  — P95: 8.7 ms (swtpm baseline)
-│       ├── set_results.txt      # SET results — P95 Δ: 11.6 ms (x86-64 loopback)
-│       ├── zkbv_results.txt     # ZKBV results (pending ARM hardware run)
-│       └── bem_results.txt      # BEM results (pending)
+│       ├── tpm_results.txt              # SA results  — P95: 8.7 ms (swtpm baseline)
+│       ├── set_results.txt              # SET results — P95 Δ: 11.6 ms (x86-64 loopback)
+│       ├── zkbv_results.txt             # ZKBV results (verify measured; ARM proving pending)
+│       ├── bem_results.txt              # BEM results — measured APCER/BPCER (see below)
+│       └── sa_set_rejection_results.txt # Real AC-2/3/4 rejection rates (see below)
 ├── src/
 │   ├── sa/                      # Sensor Attestation module
 │   ├── set/                     # Secure Telemetry Channel module
@@ -97,14 +100,17 @@ crisp-framework/
 |-----------|--------|----------|--------|----------------|
 | **SA** | TPM Quote P95 | x86-64, swtpm 0.7 | 8.7 ms | ✅ |
 | **SA** | TPM Quote P95 (hardware est.) | Infineon SLB 9672 | 80–180 ms | Disclosed in §VI |
+| **SA/SET** | Real AC-2/3/4 rejection rate | x86-64, swtpm | 0/60 forgeries accepted (n=20 each) | ✅ Measured |
+| **SA** | Bona fide acceptance (BPCER) | x86-64, swtpm | 20/20 | ✅ Measured |
 | **SET** | Handshake overhead P95 Δ | x86-64 loopback | 11.6 ms | ✅ |
 | **SA + SET combined** | Total overhead P95 | x86-64 | 20.3 ms | ✅ |
 | **ZKBV** | Groth16 proving time | ARM Cortex-A76 | Pending | ⏳ |
 | **ZKBV** | Groth16 verification time | x86-64 | ~2 ms | ✅ |
-| **BEM** | Throughput | — | Pending | ⏳ |
-| **End-to-end** | Auth latency target (P95) | ARM Cortex-A76 | < 47 ms | Target |
+| **BEM** | Per-frame latency P95 | x86-64 (WSL2) | 10.05 ms | ✅ Measured (was placeholder) |
+| **BEM** | APCER / BPCER (D-EER) | x86-64, LFW + OpenRL/DeepFakeFace | 0.00% / 0.00% (n=29 windows/class) | ✅ Measured, small-sample |
+| **End-to-end** | Auth latency target (P95) | ARM Cortex-A76 | < 47 ms | Target — see note below |
 
-**Remaining overhead budget:** 47 ms − 20.3 ms = **26.7 ms** for ZKBV + BEM on ARM target.
+**Remaining overhead budget:** the previously assumed 26.7 ms remaining for ZKBV + BEM after SA+SET (20.3 ms) no longer holds now that BEM has a *measured* P95 of 10.05 ms on x86-64 (the earlier ~1.3 ms figure was an unverified placeholder, never actually run). Combined SA+SET+BEM alone is already ~30 ms on x86-64 before ZKBV proving; the 47 ms end-to-end target should be treated as at-risk pending ARM measurement, not settled. See `benchmarks/results/bem_results.txt` for the full disclosure.
 
 ---
 
@@ -184,13 +190,16 @@ Or see [`CITATION.cff`](CITATION.cff) for CFF format.
 
 ## Open Items / Roadmap
 
+- [x] BEM throughput + real APCER/BPCER benchmark (`benchmarks/bem_bench.py`, `prepare_bem_dataset.py`)
+- [x] Real SA/SET protocol-level attack rejection test (`benchmarks/sa_rejection_test.py`)
+- [x] circom circuit source for ZKBV (`src/zkbv/`)
+- [x] Full SA + SET prototype source (`src/sa/`, `src/set/`)
+- [x] BEM implementation source (`src/bem/`)
 - [ ] ZKBV benchmark on ARM Cortex-A76 hardware (`benchmarks/zkbv_bench.py`)
-- [ ] BEM throughput benchmark (`benchmarks/bem_bench.py`)
 - [ ] SA benchmark on Infineon SLB 9672 hardware (replaces swtpm lower bound)
 - [ ] SET benchmark on ARM Cortex-A76 (replaces x86-64 loopback figure)
-- [ ] circom circuit source for ZKBV (`src/zkbv/`)
-- [ ] Full SA + SET prototype source (`src/sa/`, `src/set/`)
-- [ ] BEM implementation source (`src/bem/`)
+- [ ] BEM latency + APCER/BPCER on ARM Cortex-A76 (current results are x86-64/WSL2 only)
+- [ ] Larger-scale BEM evaluation (more identities, multiple synthesis architectures, genuine video capture — current n=29 windows/class is a small-sample proof of signal, not a deployment-grade error-rate estimate)
 - [ ] Docker container for reproducible benchmark environment
 - [ ] GitHub Actions CI for benchmark regression tests
 

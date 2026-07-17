@@ -1,40 +1,88 @@
 CRISP Benchmark 4: BEM Behavioral Entropy Monitor Throughput
 ============================================================
-Status      : PENDING — full APCER/BPCER evaluation not yet completed
-Date        : [To be filled upon benchmark completion]
-Platform    : [Target: ARM Cortex-A76 class + x86-64 latency baseline]
+Status      : MEASURED — real APCER/BPCER/D-EER evaluation completed 2026-07-17
+Date        : 2026-07-17
+Platform    : x86-64, WSL2 Ubuntu 24.04 (Python 3.12.3). ARM Cortex-A76
+              measurement remains an open item (see Limitations, §VII).
 Frame size  : 224x224 (grayscale)
 DCT blocks  : 8x8
 Histogram   : 64 bins
 Window size : 30 frames
 
 ──────────────────────────────────────────────────────────────
-Latency Benchmark (synthetic noise frames, x86-64 Ubuntu 22.04):
+Latency Benchmark (synthetic noise frames, x86-64 WSL2, 200 iterations):
 ──────────────────────────────────────────────────────────────
-  Per-frame processing time (30-frame window, 200 iterations):
-    P50  : ~0.9 ms/frame
-    P95  : ~1.3 ms/frame  <-- paper headline figure target
-    P99  : ~1.6 ms/frame
-    Mean : ~1.0 ms/frame
+    P50  : 7.88 ms/frame
+    P95  : 10.05 ms/frame  <-- paper headline figure
+    P99  : 11.75 ms/frame
+    Mean : 8.11 ms/frame
+    Std  : 0.90 ms/frame
 
-NOTE: These are preliminary x86-64 latency estimates.
-ARM Cortex-A76 results expected 1.5-2x higher (~1.5-2.0 ms P95).
-This remains within the 24.6 ms remaining budget after SA+SET+ZKBV.
+CORRECTION: an earlier version of this file reported "preliminary"
+figures of ~0.9-1.6 ms/frame. Those were never actually measured —
+they were unverified placeholder estimates carried in the repo before
+this benchmark was run for real. The measured x86-64 P95 (10.05 ms) is
+~8x higher than that placeholder and consumes most of the previously
+assumed 24.6 ms remaining budget after SA+SET+ZKBV (see
+sa_set_rejection_results.txt / zkbv_results.txt for those figures) —
+this is now flagged as a real headroom concern for the paper's 47 ms
+end-to-end latency target, not a settled figure. ARM Cortex-A76 is
+expected to be higher still and remains unmeasured.
 
 ──────────────────────────────────────────────────────────────
-APCER/BPCER Evaluation (Pending):
+APCER/BPCER/D-EER Evaluation — REAL, MEASURED:
 ──────────────────────────────────────────────────────────────
-  Target APCER : < 0.3%   (consistent with overall CRISP target)
-  Target BPCER : < 1.5%
-  Adversary simulators: StyleGAN3, Stable Diffusion XL (portrait LoRA)
-  Status: Frame sets being prepared; evaluation pending.
+  Authentic set : bitmind/lfw (Hugging Face mirror of Labeled Faces in
+                  the Wild, Huang et al. 2007) — 15 base photos.
+  Synthetic set : OpenRL/DeepFakeFace (Song et al., "Robustness and
+                  Generalizability of Deepfake Detection: A Study with
+                  Diffusion Models," 2023) — 15 base diffusion-generated
+                  images.
+  Windowing     : Each base photo expanded to 30 frames via small
+                  camera-burst-style jitter (±1.5px translation, ±1.5deg
+                  rotation, mild Gaussian sensor noise, JPEG-quality
+                  resampling 85-98) — see benchmarks/prepare_bem_dataset.py.
+                  This is NOT genuine video (neither source dataset
+                  provides video); it approximates a short handheld/
+                  webcam burst so BEM's actual per-frame DCT/spectral-
+                  flatness feature pipeline runs on real photographic
+                  and real diffusion-model pixel statistics rather than
+                  being skipped. This is a single-frame spectral-artifact
+                  test, not a temporal-motion test — disclosed as a
+                  methodology substitution for the paper's originally
+                  proposed StyleGAN3/SDXL self-generated video evaluation,
+                  which was not run (no GPU available).
+
+  Results (29 authentic windows, 29 synthetic windows, D-EER threshold):
+    Calibrated threshold : 0.1451
+    APCER (D-EER)         : 0.00%   (target: <0.3%)
+    BPCER (D-EER)         : 0.00%   (target: <1.5%)
+
+  Honest scope note: 0.00%/0.00% on this dataset means BEM's entropy
+  score gives clean separation between LFW photographs and
+  OpenRL/DeepFakeFace diffusion output at this sample size (15 base
+  images / 29 windows per class) — it demonstrates the feature
+  pipeline works and the underlying signal (DCT/spectral-flatness
+  differences between authentic-camera and diffusion-model pixel
+  statistics) is real and detectable, consistent with prior literature
+  on GAN/diffusion spectral artifacts. It should NOT be read as a
+  population-scale error-rate estimate with statistical confidence
+  bounds — that would require a substantially larger and more diverse
+  evaluation set (more identities, multiple synthesis architectures,
+  genuine video capture) before being reported as a deployment-grade
+  APCER/BPCER figure. This replaces the paper's prior status of
+  "Pending" / self-generated StyleGAN3+SDXL claims that were never
+  actually run.
 
 Hardware Disclosure:
-  Latency figures are from x86-64 only. ARM Cortex-A76 measurements
-  pending. Hardware perf counter integration (perf_event_open) requires
-  Linux kernel >= 4.1 and kernel.perf_event_paranoid <= 1.
+  Latency and APCER/BPCER figures are from x86-64 (WSL2) only. ARM
+  Cortex-A76 measurements remain pending — see Limitations (§VII).
+  Hardware perf counter integration (perf_event_open) requires Linux
+  kernel >= 4.1 and kernel.perf_event_paranoid <= 1; not exercised here.
 
 Reproduction:
-  See benchmarks/BENCHMARK_GUIDE.md — Benchmark 4 section.
-  Requires: numpy, scipy, Pillow.
-  For APCER/BPCER: provide --authentic and --synthetic frame directories.
+  benchmarks/prepare_bem_dataset.py   — downloads + builds the frame sets
+  benchmarks/bem_bench.py --authentic /tmp/bem_dataset/authentic \
+                           --synthetic /tmp/bem_dataset/synthetic \
+                           --iterations 200
+  Requires: numpy, scipy, Pillow, datasets (huggingface).

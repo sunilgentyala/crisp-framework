@@ -167,7 +167,7 @@ def generate_synthetic_frame(seed: int, size: tuple = (224, 224)) -> np.ndarray:
     return rng.integers(0, 256, size=size, dtype=np.uint8)
 
 
-def load_frames_from_dir(directory: str, limit: int = 100) -> list[np.ndarray]:
+def load_frames_from_dir(directory: str, limit: int = 2000) -> list[np.ndarray]:
     """Load grayscale frames from a directory of PNG/JPG files."""
     if not PIL_AVAILABLE:
         print("ERROR: Pillow required for frame loading. pip install Pillow",

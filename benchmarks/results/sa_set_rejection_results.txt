@@ -1,0 +1,63 @@
+CRISP Benchmark 5: SA/SET Real Protocol-Level Rejection Test
+==============================================================
+Date        : 2026-07-17
+Platform    : x86-64 (WSL2 Ubuntu 24.04), swtpm 0.7.3, tpm2-tools 5.6
+Script      : benchmarks/sa_rejection_test.py
+
+Purpose:
+  Section VI.D of the paper previously asserted that SA blocks AC-2/AC-3
+  and SET blocks AC-4 "by construction," without a measured result. This
+  benchmark replaces that assertion with a real measurement by driving
+  the actual src/sa and src/set modules (not a mock) against genuine and
+  adversarial inputs.
+
+Bug found and fixed during this benchmark (see git history):
+  SensorAttestation._verify_tpm_signature() was a stub that unconditionally
+  returned True — the AIK signature check (the mechanism that gives
+  SA-Verify its unforgeability guarantee, Equation 2) was never actually
+  implemented in the reference code prior to this benchmark. It has been
+  replaced with a real tpm2_checkquote-based verification. Prior published
+  APCER=0% claims for AC-2/AC-3 were therefore not backed by working code;
+  they are now.
+
+Results (n=20 trials per adversarial condition unless noted):
+
+  Bona fide (genuine frame + genuine attested quote):
+    Accepted: 20/20        BPCER (this test): 0.0%
+
+  AC-2/AC-3 sim A — frame with no TPM quote at all:
+    Rejected: 1/1 (deterministic — quote fields empty, hash check fails)
+
+  AC-2/AC-3 sim B — forged quote_blob/signature bytes (correct frame
+  hash + session nonce, random signature material):
+    Rejected: 20/20        APCER: 0.0%
+
+  AC-2/AC-3 sim C — genuinely valid TPM quote, but signed by an
+  uncertified adversary AIK (realistic virtual-camera/injection-tool
+  case: adversary can provision their own key, but the auth module only
+  trusts the certified sensor's public key):
+    Rejected: 20/20        APCER: 0.0%
+
+  AC-4 — SET channel AEAD ciphertext tampering (LD_PRELOAD-style
+  substitution simulated as a single bit-flip in transit):
+    Untampered decrypt: succeeds (sanity check)
+    Rejected: 20/20        APCER: 0.0%
+
+Scope and honest limitations:
+  - n=20 per condition demonstrates deterministic protocol-level
+    correctness (cryptographic accept/reject behavior), not a
+    population-level error-rate estimate in the PAD/biometrics sense.
+    0/20 forgeries succeeding is consistent with the ECDSA/AEAD hardness
+    assumptions in Section V, not itself a statistical bound — a much
+    larger n would be needed to report a numeric APCER with a confidence
+    interval, and there is no reason to expect a different outcome at
+    larger n given these are deterministic cryptographic checks.
+  - This tests the protocol logic (SA quote verification, SET AEAD
+    integrity), not visual/statistical detection of synthetic content —
+    that is BEM's job, evaluated separately (see bem_results.txt).
+  - Software TPM (swtpm); real hardware AIK provisioning/attestation
+    timing is disclosed separately in tpm_results.txt.
+
+Reproduction:
+  See benchmarks/sa_rejection_test.py. Requires swtpm + tpm2-tools running
+  with TPM2TOOLS_TCTI=swtpm:path=/tmp/vtpm/sock (or a real TPM device).

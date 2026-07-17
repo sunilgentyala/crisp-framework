@@ -58,6 +58,7 @@ class AttestationQuote:
     quote_blob:     str                  # base64(TPM2B_ATTEST)
     signature:      str                  # base64(ECDSA sig)
     aik_cert_path:  Optional[str] = None
+    pcr_file:       Optional[str] = None # base64(tpm2_quote -o PCR digest file), needed by tpm2_checkquote
 
     def to_dict(self) -> dict:
         return {
@@ -67,6 +68,7 @@ class AttestationQuote:
             "quote_blob":    self.quote_blob,
             "signature":     self.signature,
             "aik_cert_path": self.aik_cert_path,
+            "pcr_file":      self.pcr_file,
         }
 
     @classmethod
@@ -141,6 +143,7 @@ class SensorAttestation:
 
             quote_b64 = self._b64_file(quote_path)
             sig_b64   = self._b64_file(sig_path)
+            pcr_b64   = self._b64_file(pcr_path)
             pcr_values = self._read_pcr_values()
 
         return AttestationQuote(
@@ -149,6 +152,7 @@ class SensorAttestation:
             pcr_values    = pcr_values,
             quote_blob    = quote_b64,
             signature     = sig_b64,
+            pcr_file      = pcr_b64,
         )
 
     @staticmethod
@@ -156,7 +160,8 @@ class SensorAttestation:
         quote:            AttestationQuote,
         expected_frame:   bytes,
         session_nonce:    str,
-        aik_cert_path:    str,
+        aik_pub_path:     str,
+        tcti:             Optional[str] = None,
     ) -> bool:
         """
         Verify a TPM attestation quote on the authentication module side.
@@ -164,7 +169,9 @@ class SensorAttestation:
         Checks (in order):
           1. Frame hash in quote matches SHA-256(expected_frame).
           2. Session nonce in quote matches the one issued for this session.
-          3. TPM quote blob signature verifies against the AIK certificate.
+          3. TPM quote blob signature verifies against the AIK public key
+             (TPM2B_PUBLIC area produced by SensorProvisioner.provision(),
+             checked via `tpm2_checkquote`).
 
         Returns True only if all three checks pass.
         Any failure indicates either an injection attempt or data corruption.
@@ -185,7 +192,7 @@ class SensorAttestation:
 
         # Check 3: TPM quote signature
         return SensorAttestation._verify_tpm_signature(
-            quote, aik_cert_path
+            quote, aik_pub_path, tcti=tcti
         )
 
     @staticmethod
@@ -246,30 +253,67 @@ class SensorAttestation:
         return pcr_values
 
     @staticmethod
-    def _verify_tpm_signature(quote: AttestationQuote, cert_path: str) -> bool:
+    def _verify_tpm_signature(
+        quote:       AttestationQuote,
+        aik_pub_path: str,
+        tcti:        Optional[str] = None,
+    ) -> bool:
         """
         Verify the ECDSA-P256 signature on the TPM2B_ATTEST structure
-        against the AIK certificate's public key.
+        against the AIK public key via `tpm2_checkquote`.
 
-        In a full deployment, this would use tpm2_checkquote or
-        openssl dgst -verify with the extracted public key.
+        This is the check that gives SA-Verify its cryptographic soundness
+        (Equation 2): a quote_blob/signature pair that does not chain to
+        aik_pub_path — e.g. produced by an unattested source such as a
+        virtual-camera/injection adversary with no AIK — is rejected here,
+        independent of whether the frame hash and nonce happen to match.
         """
-        if not os.path.exists(cert_path):
-            raise FileNotFoundError(f"AIK certificate not found: {cert_path}")
-        try:
-            import base64
-            with tempfile.TemporaryDirectory() as tmpdir:
-                quote_path = os.path.join(tmpdir, "quote.bin")
-                sig_path   = os.path.join(tmpdir, "sig.bin")
-                with open(quote_path, "wb") as f:
-                    f.write(base64.b64decode(quote.signature))  # placeholder
-                # Full verification via tpm2_checkquote:
-                #   tpm2_checkquote -u aik.pub -m quote.bin -s sig.bin -q nonce
-                # This implementation defers to the tpm2-tools reference;
-                # production deployments should invoke tpm2_checkquote directly.
-                return True   # Placeholder: real verification in production
-        except Exception:
-            return False
+        if not os.path.exists(aik_pub_path):
+            raise FileNotFoundError(f"AIK public key not found: {aik_pub_path}")
+
+        import base64
+        env = {**os.environ}
+        if tcti:
+            env["TPM2TOOLS_TCTI"] = tcti
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            quote_path = os.path.join(tmpdir, "quote.bin")
+            sig_path   = os.path.join(tmpdir, "sig.bin")
+
+            try:
+                quote_bytes = base64.b64decode(quote.quote_blob)
+                sig_bytes   = base64.b64decode(quote.signature)
+            except Exception:
+                return False  # malformed/forged quote material
+
+            with open(quote_path, "wb") as f:
+                f.write(quote_bytes)
+            with open(sig_path, "wb") as f:
+                f.write(sig_bytes)
+
+            nonce_bytes = SensorAttestation._nonce_for_tpm(
+                quote.frame_hash, quote.session_nonce
+            )
+
+            # Note: tpm2_checkquote also supports an -f/-l PCR-replay
+            # cross-check against the quote's PCR digest. It is intentionally
+            # not used here: round-tripping tpm2_quote's -o PCR-selection
+            # file through this process reliably produced a malformed
+            # replay file in testing (a tooling/format detail, not a
+            # cryptographic issue), and silently degrading a security check
+            # on a caught exception is worse than not attempting it. The
+            # signature check below is what gives SA-Verify its soundness
+            # (Equation 2); PCR-replay would be defense-in-depth on top of it.
+            cmd = [
+                "tpm2_checkquote",
+                "-u", aik_pub_path,
+                "-m", quote_path,
+                "-s", sig_path,
+                "-q", nonce_bytes.hex(),
+            ]
+
+            result = subprocess.run(cmd, capture_output=True, text=True, env=env)
+            return result.returncode == 0
 
     @staticmethod
     def _sha256_hex(data: bytes) -> str:
