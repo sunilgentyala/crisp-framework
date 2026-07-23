@@ -3,7 +3,29 @@ message: "If you use this work, please cite as below."
 authors:
   - family-names: "Gentyala"
     given-names: "Sunil"
+    email: sunil.gentyala@ieee.org
+    affiliation: "HCLTech (HCL America Inc.), USA"
     orcid: "https://orcid.org/0009-0005-2642-3479"
+  - family-names: "Darisi"
+    given-names: "Suresh Kumar"
+    email: darisi.suresh@ieee.org
+    affiliation: "HCL, USA"
+  - family-names: "Pendyala"
+    given-names: "Manasa"
+    email: manasa.pendyala@oracle.com
+    affiliation: "Oracle, USA"
+  - family-names: "Caprio"
+    given-names: "Floriano"
+    email: floriano.caprio@hcltech.com
+    affiliation: "HCLTech, Italy"
+  - family-names: "Kasturi"
+    given-names: "Akhila"
+    email: kasturi.akhila@gmail.com
+    affiliation: "India"
+  - family-names: "Lande"
+    given-names: "Vamshi"
+    email: vamshilande@my.unt.edu
+    affiliation: "University of North Texas, USA"
 title: "CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance"
 version: 1.0.0
 date-released: 2026-04-22
@@ -18,12 +40,24 @@ keywords:
   - post-quantum cryptography
   - eKYC
 preferred-citation:
-  type: unpublished
+  type: conference-paper
   authors:
     - family-names: "Gentyala"
       given-names: "Sunil"
       orcid: "https://orcid.org/0009-0005-2642-3479"
-  title: "The Weaponization of Deepfakes: A Novel Cryptographic Framework Mitigating Biometric Injection and Identity Gaps"
+    - family-names: "Darisi"
+      given-names: "Suresh Kumar"
+    - family-names: "Pendyala"
+      given-names: "Manasa"
+    - family-names: "Caprio"
+      given-names: "Floriano"
+    - family-names: "Kasturi"
+      given-names: "Akhila"
+    - family-names: "Lande"
+      given-names: "Vamshi"
+  title: "The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic Framework for Mitigating Biometric Injection and Identity Gaps"
   year: 2026
-  notes: "Manuscript under review"
+  conference:
+    name: "2026 IEEE Technology and Engineering Management Conference -- Asia Pacific (TEMSCON-ASPAC)"
+  notes: "Paper #818, EDAS Paper ID: 1571328233. Manuscript submitted, decision pending."
   url: "https://github.com/sunilgentyala/crisp-framework"

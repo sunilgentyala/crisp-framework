@@ -189,6 +189,11 @@
     color: var(--muted);
   }
 
+  .author-card { padding: 16px 18px; }
+  .author-card .name { color: var(--text); font-weight: 600; margin-bottom: 4px; }
+  .author-card .role { color: var(--muted); font-size: 0.88rem; margin-bottom: 4px; }
+  .author-card .email { font-size: 0.85rem; }
+
   footer {
     padding: 40px 0 60px;
     color: var(--muted);
@@ -202,7 +207,7 @@
 
 <header class="hero">
   <div class="wrap">
-    <span class="eyebrow">Manuscript under review</span>
+    <span class="eyebrow">Submitted &middot; IEEE TEMSCON-ASPAC 2026</span>
     <h1>Closing the chain-of-trust gap behind <span>biometric injection attacks</span></h1>
     <p class="lede">
       CRISP (Cryptographic Root-of-trust Identity and Sensor Provenance) is a four-component
@@ -348,24 +353,75 @@ python3 benchmarks/tpm_bench.py</code></pre>
 <section id="cite">
   <div class="wrap">
     <h2>Citation</h2>
+    <p class="section-sub">Submitted to the 2026 IEEE Technology &amp; Engineering Management Conference - Asia Pacific (TEMSCON-ASPAC), Special Track: Technology and Management. Paper #818 (EDAS Paper ID: 1571328233). Decision pending.</p>
     <div class="cite">
-      <pre style="margin: 0; border: none; background: none; padding: 0;"><code>@unpublished{gentyala2026crisp,
-  author = {Gentyala, Sunil},
-  title  = {The Weaponization of Deepfakes: A Novel Cryptographic Framework
-            Mitigating Biometric Injection and Identity Gaps},
-  year   = {2026},
-  note   = {Manuscript under review},
-  url    = {https://github.com/sunilgentyala/crisp-framework}
+      <pre style="margin: 0; border: none; background: none; padding: 0;"><code>@inproceedings{gentyala2026weaponization,
+  author    = {Gentyala, Sunil and Darisi, Suresh Kumar and Pendyala, Manasa
+               and Caprio, Floriano and Kasturi, Akhila and Lande, Vamshi},
+  title     = {The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic
+               Framework for Mitigating Biometric Injection and Identity Gaps},
+  booktitle = {2026 IEEE Technology and Engineering Management Conference --
+               Asia Pacific (TEMSCON-ASPAC)},
+  year      = {2026},
+  publisher = {IEEE},
+  note      = {Paper #818, EDAS Paper ID: 1571328233. Manuscript submitted,
+               decision pending.}
 }</code></pre>
-      <br>
-      Or see <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/CITATION.cff">CITATION.cff</a> for CFF format.
+      <p style="margin: 14px 0 0;">
+        <strong style="color: var(--text);">IEEE format:</strong>
+        S. Gentyala, S. K. Darisi, M. Pendyala, F. Caprio, A. Kasturi, and V. Lande,
+        &ldquo;The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic Framework
+        for Mitigating Biometric Injection and Identity Gaps,&rdquo; submitted to
+        <em>2026 IEEE Technology &amp; Engineering Management Conference - Asia Pacific (TEMSCON-ASPAC)</em>, 2026.
+      </p>
+      <p style="margin: 14px 0 0;">
+        Or see <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/CITATION.cff">CITATION.cff</a> for CFF format.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="authors">
+  <div class="wrap">
+    <h2>Authors</h2>
+    <div class="grid">
+      <div class="card author-card">
+        <div class="name">Sunil Gentyala, IEEE Senior Member</div>
+        <div class="role">HCLTech (HCL America Inc.), USA</div>
+        <div class="email"><a href="mailto:sunil.gentyala@ieee.org">sunil.gentyala@ieee.org</a></div>
+      </div>
+      <div class="card author-card">
+        <div class="name">Suresh Kumar Darisi</div>
+        <div class="role">HCL, USA</div>
+        <div class="email"><a href="mailto:darisi.suresh@ieee.org">darisi.suresh@ieee.org</a></div>
+      </div>
+      <div class="card author-card">
+        <div class="name">Manasa Pendyala</div>
+        <div class="role">Oracle, USA</div>
+        <div class="email"><a href="mailto:manasa.pendyala@oracle.com">manasa.pendyala@oracle.com</a></div>
+      </div>
+      <div class="card author-card">
+        <div class="name">Floriano Caprio</div>
+        <div class="role">HCLTech, Italy</div>
+        <div class="email"><a href="mailto:floriano.caprio@hcltech.com">floriano.caprio@hcltech.com</a></div>
+      </div>
+      <div class="card author-card">
+        <div class="name">Akhila Kasturi</div>
+        <div class="role">India</div>
+        <div class="email"><a href="mailto:kasturi.akhila@gmail.com">kasturi.akhila@gmail.com</a></div>
+      </div>
+      <div class="card author-card">
+        <div class="name">Vamshi Lande</div>
+        <div class="role">University of North Texas, USA</div>
+        <div class="email"><a href="mailto:vamshilande@my.unt.edu">vamshilande@my.unt.edu</a></div>
+      </div>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    CRISP &middot; MIT License &middot; Sunil Gentyala, HCLTECH (HCL America Inc.) &middot;
+    CRISP &middot; MIT License &middot; Sunil Gentyala, Suresh Kumar Darisi, Manasa Pendyala, Floriano Caprio, Akhila Kasturi, Vamshi Lande &middot;
     <a href="https://github.com/sunilgentyala/crisp-framework">GitHub</a>
   </div>
 </footer>

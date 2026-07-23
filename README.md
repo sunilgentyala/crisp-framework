@@ -1,7 +1,7 @@
 
 # crisp-framework# CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance
 
-[![Paper Status](https://img.shields.io/badge/Paper-Under_Review-blue)](https://github.com/sunilgentyala/crisp-framework/blob/main/PAPER_STATUS.md)
+[![Paper Status](https://img.shields.io/badge/Paper-Submitted_TEMSCON--ASPAC_2026-blue)](https://github.com/sunilgentyala/crisp-framework/blob/main/PAPER_STATUS.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue)](https://www.python.org/)
 
@@ -11,8 +11,9 @@
 
 This repository accompanies the paper:
 
-> **The Weaponization of Deepfakes: A Novel Cryptographic Framework Mitigating Biometric Injection and Identity Gaps**  
-> *Under review.*
+> **The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic Framework for Mitigating Biometric Injection and Identity Gaps**  
+> *Sunil Gentyala, Suresh Kumar Darisi, Manasa Pendyala, Floriano Caprio, Akhila Kasturi, Vamshi Lande.*  
+> Submitted to the 2026 IEEE Technology & Engineering Management Conference -- Asia Pacific (TEMSCON-ASPAC), Special Track: Technology and Management. Paper #818 (EDAS Paper ID: 1571328233). Decision pending.
 
 CRISP is a four-component cryptographic framework that closes the hardware-to-authentication chain-of-trust gap exploited by OS-level biometric injection attacks — a class of attack that bypasses every existing liveness and presentation-attack detection mechanism by impersonating the camera itself rather than spoofing it.
 
@@ -174,13 +175,17 @@ Adv_BIA(A, λ) ≤ Adv_ECDSA(A) + Adv_ZK-Sound(A) + ε_BEM + negl(λ)
 ## Paper Citation
 
 ```bibtex
-@unpublished{gentyala2026crisp,
-  author = {Gentyala, Sunil},
-  title  = {The Weaponization of Deepfakes: A Novel Cryptographic Framework
-            Mitigating Biometric Injection and Identity Gaps},
-  year   = {2026},
-  note   = {Manuscript under review},
-  url    = {https://github.com/sunilgentyala/crisp-framework}
+@inproceedings{gentyala2026weaponization,
+  author    = {Gentyala, Sunil and Darisi, Suresh Kumar and Pendyala, Manasa
+               and Caprio, Floriano and Kasturi, Akhila and Lande, Vamshi},
+  title     = {The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic
+               Framework for Mitigating Biometric Injection and Identity Gaps},
+  booktitle = {2026 IEEE Technology and Engineering Management Conference --
+               Asia Pacific (TEMSCON-ASPAC)},
+  year      = {2026},
+  publisher = {IEEE},
+  note      = {Paper #818, EDAS Paper ID: 1571328233. Manuscript submitted,
+               decision pending.}
 }
 ```
 
