@@ -1,8 +1,6 @@
 /*
  * CRISP ZKBV Circuit — Hamming Distance Check
  * ============================================
- * Paper: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
- *         Zero-Knowledge Verification Against Biometric Injection Attacks"
  *
  * Statement proven:
  *   ∃ probe[0..n-1] ∈ {0,1}^n such that:

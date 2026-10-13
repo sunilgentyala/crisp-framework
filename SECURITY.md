@@ -9,7 +9,6 @@ This repository contains benchmark scripts and supporting material for the CRISP
 | Component | Status |
 |-----------|--------|
 | Benchmark scripts (v1.0.0) | Active |
-| Paper (submitted) | Under review |
 
 ## Reporting a Vulnerability
 

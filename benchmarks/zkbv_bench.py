@@ -1,8 +1,6 @@
 """
 CRISP Framework — Benchmark 3: ZKBV Groth16 Proving and Verification Time
 ==========================================================================
-Paper: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
-        Zero-Knowledge Verification Against Biometric Injection Attacks"
 
 Description:
     Measures Groth16 zkSNARK proving and verification time for the ZKBV

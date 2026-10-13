@@ -1,7 +1,6 @@
 
 # crisp-framework# CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance
 
-[![Paper Status](https://img.shields.io/badge/Paper-Under_review-blue)](https://github.com/sunilgentyala/crisp-framework/blob/main/PAPER_STATUS.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue)](https://www.python.org/)
 
@@ -9,20 +8,9 @@
 
 ## Overview
 
-This repository accompanies the paper:
-
-> **CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound Zero-Knowledge Verification Against Biometric Injection Attacks**  
-> *Sunil Gentyala, S. M. Krishna Reddy Padala, Vahiduddin Shariff, Akhila Kasturi, Suresh Kumar Darisi.*  
-> Manuscript under review.
+This repository contains the reference prototype and benchmark scripts for CRISP, an open-source research framework.
 
 CRISP is a four-component cryptographic framework that closes the hardware-to-authentication chain-of-trust gap exploited by OS-level biometric injection attacks — a class of attack that bypasses every existing liveness and presentation-attack detection mechanism by impersonating the camera itself rather than spoofing it.
-
-<p align="center">
-  <img src="docs/crisp-architecture.png" alt="CRISP architecture and trust zones" width="340"/>
-  <img src="docs/crisp-workflow.png" alt="CRISP end-to-end workflow" width="340"/>
-</p>
-
-*Left: trust zones, where only the trusted capture boundary signs frame manifests. Right: end-to-end workflow, in which the verifier accepts only if all seven checks pass (fail-closed).*
 
 ---
 
@@ -88,7 +76,6 @@ crisp-framework/
 │   ├── zkbv/                    # ZK Biometric Verification module (circom circuits)
 │   └── bem/                     # Behavioral Entropy Monitor module
 ├── CITATION.cff                 # Citation metadata
-├── PAPER_STATUS.md              # Submission status
 ├── CONTRIBUTING.md              # Contribution guidelines
 ├── SECURITY.md                  # Vulnerability disclosure policy
 ├── LICENSE                      # MIT License
@@ -179,20 +166,9 @@ Adv_BIA(A, λ) ≤ Adv_ECDSA(A) + Adv_ZK-Sound(A) + ε_BEM + negl(λ)
 
 ---
 
-## Paper Citation
+## Citation
 
-```bibtex
-@unpublished{gentyala2026crisp,
-  author    = {Gentyala, Sunil and Padala, S. M. Krishna Reddy and Shariff, Vahiduddin
-               and Kasturi, Akhila and Darisi, Suresh Kumar},
-  title     = {CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
-               Zero-Knowledge Verification Against Biometric Injection Attacks},
-  year      = {2026},
-  note      = {Manuscript under review}
-}
-```
-
-Or see [`CITATION.cff`](CITATION.cff) for CFF format.
+See [`CITATION.cff`](CITATION.cff) for software citation metadata.
 
 ---
 
@@ -222,5 +198,4 @@ MIT — see [LICENSE](LICENSE).
 ## Contact / Issues
 
 For questions about the benchmarks or reproduction, open a GitHub Issue.  
-For the manuscript, see [PAPER_STATUS.md](PAPER_STATUS.md).  
 For security vulnerabilities, see [SECURITY.md](SECURITY.md).

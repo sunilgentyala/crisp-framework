@@ -1,8 +1,6 @@
 """
 CRISP Framework — Benchmark 4: BEM Behavioral Entropy Monitor Throughput
 =========================================================================
-Paper: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
-        Zero-Knowledge Verification Against Biometric Injection Attacks"
 
 Description:
     Measures the per-frame processing throughput of the Behavioral Entropy
