@@ -21,7 +21,7 @@ authors:
   - family-names: "Darisi"
     given-names: "Suresh Kumar"
     email: darisi.suresh@ieee.org
-    affiliation: "HCL, USA"
+    affiliation: "Rocket Software Inc., Boston, MA, USA"
 title: "CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance"
 version: 1.0.0
 date-released: 2026-04-22
