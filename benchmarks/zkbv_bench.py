@@ -1,8 +1,8 @@
 """
 CRISP Framework — Benchmark 3: ZKBV Groth16 Proving and Verification Time
 ==========================================================================
-Paper: "The Weaponization of Deepfakes: A Novel Cryptographic Framework
-        Mitigating Biometric Injection and Identity Gaps"
+Paper: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
+        Zero-Knowledge Verification Against Biometric Injection Attacks"
 Target Journal: IEEE Transactions on Information Forensics and Security
 
 Description:

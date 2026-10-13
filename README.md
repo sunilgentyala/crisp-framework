@@ -11,11 +11,18 @@
 
 This repository accompanies the paper:
 
-> **The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic Framework for Mitigating Biometric Injection and Identity Gaps**  
+> **CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound Zero-Knowledge Verification Against Biometric Injection Attacks**  
 > *Sunil Gentyala, Suresh Kumar Darisi, Manasa Pendyala, Floriano Caprio, Akhila Kasturi, Vamshi Lande.*  
 > Submitted to the 2026 IEEE Technology & Engineering Management Conference -- Asia Pacific (TEMSCON-ASPAC), Special Track: Technology and Management. Paper #818 (EDAS Paper ID: 1571328233). Decision pending.
 
 CRISP is a four-component cryptographic framework that closes the hardware-to-authentication chain-of-trust gap exploited by OS-level biometric injection attacks — a class of attack that bypasses every existing liveness and presentation-attack detection mechanism by impersonating the camera itself rather than spoofing it.
+
+<p align="center">
+  <img src="docs/crisp-architecture.png" alt="CRISP architecture and trust zones" width="340"/>
+  <img src="docs/crisp-workflow.png" alt="CRISP end-to-end workflow" width="340"/>
+</p>
+
+*Left: trust zones, where only the trusted capture boundary signs frame manifests. Right: end-to-end workflow, in which the verifier accepts only if all seven checks pass (fail-closed).*
 
 ---
 
@@ -175,11 +182,11 @@ Adv_BIA(A, λ) ≤ Adv_ECDSA(A) + Adv_ZK-Sound(A) + ε_BEM + negl(λ)
 ## Paper Citation
 
 ```bibtex
-@inproceedings{gentyala2026weaponization,
+@inproceedings{gentyala2026crisp,
   author    = {Gentyala, Sunil and Darisi, Suresh Kumar and Pendyala, Manasa
                and Caprio, Floriano and Kasturi, Akhila and Lande, Vamshi},
-  title     = {The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic
-               Framework for Mitigating Biometric Injection and Identity Gaps},
+  title     = {CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
+               Zero-Knowledge Verification Against Biometric Injection Attacks},
   booktitle = {2026 IEEE Technology and Engineering Management Conference --
                Asia Pacific (TEMSCON-ASPAC)},
   year      = {2026},

@@ -1,8 +1,8 @@
 """
 CRISP Framework — Real SA/SET Protocol-Level Rejection Test
 =============================================================
-Paper: "The Weaponization of Deepfakes: A Novel Cryptographic Framework
-        Mitigating Biometric Injection and Identity Gaps"
+Paper: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
+        Zero-Knowledge Verification Against Biometric Injection Attacks"
 
 Purpose:
     The paper claims (Section VI.D) that SA blocks AC-2/AC-3 injection

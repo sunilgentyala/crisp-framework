@@ -55,7 +55,7 @@ preferred-citation:
       given-names: "Akhila"
     - family-names: "Lande"
       given-names: "Vamshi"
-  title: "The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic Framework for Mitigating Biometric Injection and Identity Gaps"
+  title: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound Zero-Knowledge Verification Against Biometric Injection Attacks"
   year: 2026
   conference:
     name: "2026 IEEE Technology and Engineering Management Conference -- Asia Pacific (TEMSCON-ASPAC)"

@@ -1,7 +1,7 @@
 ## Paper Status
 
-Title: The Weaponization of Deepfakes: A Hardware-Rooted Cryptographic
-Framework for Mitigating Biometric Injection and Identity Gaps
+Title: CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
+Zero-Knowledge Verification Against Biometric Injection Attacks
 
 Authors: Sunil Gentyala, Suresh Kumar Darisi, Manasa Pendyala,
 Floriano Caprio, Akhila Kasturi, Vamshi Lande
