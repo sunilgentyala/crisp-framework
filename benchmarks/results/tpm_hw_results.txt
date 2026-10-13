@@ -1,0 +1,17 @@
+CRISP Benchmark 7: Hardware TPM 2.0 Quote Latency (Windows, TBS)
+=================================================================
+Date        : 2026-10-13
+Platform    : Windows 11 Pro laptop, Nuvoton (NTC) TPM 2.0, firmware 7.2.3.1
+Script      : benchmarks/tpm_hw_quote_windows.py (ctypes over tbs.dll, no external tools)
+Operation   : TPM2_Quote over PCRs 0,1,7 (SHA-256 bank), fresh 32-byte qualifying
+              data per trial, volatile restricted ECDSA P-256 key in the NULL hierarchy
+Trials      : 100 timed quotes after 5 warm-up quotes
+
+Result (milliseconds):
+  min 67.57 | P50 85.34 | P95 111.86 | P99 123.09 | max 123.97 | mean 90.43
+
+Scope and limitations:
+  One platform. Timing includes Windows TBS and driver overhead. The quote
+  signature was not verified in this script (verification is covered by the
+  swtpm-based benchmarks). This is a single laptop TPM, not a mobile secure
+  element or an ARM TEE.

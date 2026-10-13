@@ -4,335 +4,448 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRISP | Cryptographic Root-of-trust Identity and Sensor Provenance</title>
-<meta name="description" content="CRISP is a four-component cryptographic framework — TPM sensor attestation, post-quantum hybrid telemetry, zero-knowledge biometric verification, and entropy-based anomaly detection — that closes the chain-of-trust gap exploited by OS-level biometric injection attacks.">
-<meta property="og:title" content="CRISP - Cryptographic Root-of-trust Identity and Sensor Provenance"/>
-<meta property="og:description" content="A four-component cryptographic framework closing the hardware-to-authentication chain-of-trust gap exploited by OS-level biometric injection attacks."/>
-<meta property="og:image" content="og-image.svg"/>
+<meta name="description" content="CRISP is an open-source research prototype that defends biometric authentication against injection attacks with TPM sensor attestation, post-quantum hybrid telemetry, zero-knowledge biometric verification, and entropy-based anomaly detection.">
+<meta property="og:title" content="CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance"/>
+<meta property="og:description" content="Open-source research prototype for defending biometric authentication against injection attacks: TPM attestation, PQ-hybrid channel, ZK biometric verification, entropy monitoring."/>
+<meta property="og:image" content="https://sunilgentyala.github.io/crisp-framework/og-image.png"/>
+<meta property="og:url" content="https://sunilgentyala.github.io/crisp-framework/"/>
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="CRISP"/>
-<meta name="twitter:description" content="TPM attestation + PQ-hybrid channels + ZK biometric verification + entropy detection, closing the biometric injection attack gap.">
+<meta name="twitter:description" content="TPM attestation, PQ-hybrid channels, ZK biometric verification, and entropy detection against biometric injection attacks."/>
+<meta name="twitter:image" content="https://sunilgentyala.github.io/crisp-framework/og-image.png"/>
+<meta name="color-scheme" content="dark light">
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <style>
   :root {
     --bg: #0a0e14;
-    --bg-alt: #10151d;
+    --bg-alt: #0e131b;
     --card: #131920;
+    --card-hi: #18202a;
     --border: #212a35;
     --text: #e6edf3;
-    --muted: #93a1b0;
+    --muted: #9aa8b6;
     --accent: #ff5470;
     --accent-2: #3fd7c2;
+    --good: #3fd7c2;
+    --bad: #ff5470;
+    --track: #1c2530;
+    --code-bg: #0c1118;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
   }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f9fb; --bg-alt: #eef2f6; --card: #ffffff; --card-hi: #f3f6f9;
+      --border: #d9e1e8; --text: #14202b; --muted: #50606f;
+      --accent: #d6264a; --accent-2: #0a8f7e; --good: #0a8f7e; --bad: #d6264a;
+      --track: #e4eaf0; --code-bg: #f1f5f9; --shadow: 0 10px 30px rgba(20,32,43,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f9fb; --bg-alt: #eef2f6; --card: #ffffff; --card-hi: #f3f6f9;
+    --border: #d9e1e8; --text: #14202b; --muted: #50606f;
+    --accent: #d6264a; --accent-2: #0a8f7e; --good: #0a8f7e; --bad: #d6264a;
+    --track: #e4eaf0; --code-bg: #f1f5f9; --shadow: 0 10px 30px rgba(20,32,43,0.08);
+  }
+
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.6;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
   }
   a { color: var(--accent-2); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
+  /* nav */
+  nav.top {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 58px; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.02em; color: var(--text); }
+  .brand:hover { text-decoration: none; }
+  .brand img { width: 26px; height: 26px; border-radius: 6px; }
+  .links { display: flex; gap: 20px; align-items: center; font-size: 0.9rem; }
+  .links a { color: var(--muted); }
+  .links a:hover { color: var(--text); text-decoration: none; }
+  .links .gh { color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; }
+  .links .gh:hover { border-color: var(--accent-2); }
+  @media (max-width: 760px) { .links a:not(.gh) { display: none; } }
+
+  /* hero */
   header.hero {
-    padding: 90px 0 60px;
-    background: radial-gradient(circle at 18% 20%, rgba(255,84,112,0.12), transparent 45%),
-                radial-gradient(circle at 82% 0%, rgba(63,215,194,0.12), transparent 40%);
+    padding: 84px 0 56px;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(255,84,112,0.14), transparent 42%),
+      radial-gradient(circle at 85% 0%, rgba(63,215,194,0.14), transparent 40%);
     border-bottom: 1px solid var(--border);
   }
   .eyebrow {
-    display: inline-block;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--accent-2);
-    border: 1px solid rgba(63,215,194,0.4);
-    padding: 4px 10px;
-    border-radius: 999px;
-    margin-bottom: 18px;
+    border: 1px solid color-mix(in srgb, var(--accent-2) 45%, transparent);
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 20px;
   }
-  h1 {
-    font-size: 2.6rem;
-    margin: 0 0 14px;
-    line-height: 1.15;
-  }
+  .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
+  h1 { font-size: clamp(2rem, 5vw, 3.1rem); margin: 0 0 16px; line-height: 1.12; letter-spacing: -0.02em; max-width: 820px; }
   h1 span { color: var(--accent); }
-  .lede {
-    font-size: 1.15rem;
-    color: var(--muted);
-    max-width: 720px;
-    margin: 0 0 30px;
-  }
+  .lede { font-size: 1.15rem; color: var(--muted); max-width: 760px; margin: 0 0 30px; }
   .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn {
-    display: inline-block;
-    padding: 11px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
+  .btn { display: inline-block; padding: 12px 22px; border-radius: 10px; font-weight: 600; font-size: 0.95rem; transition: transform .15s, background .15s, border-color .15s; }
+  .btn:hover { text-decoration: none; transform: translateY(-1px); }
   .btn-primary { background: var(--accent-2); color: #06231f; }
-  .btn-primary:hover { background: #6fe8d8; text-decoration: none; }
-  .btn-secondary { border: 1px solid var(--border); color: var(--text); }
-  .btn-secondary:hover { border-color: var(--accent-2); text-decoration: none; }
+  .btn-primary:hover { background: color-mix(in srgb, var(--accent-2) 80%, white); }
+  .btn-secondary { border: 1px solid var(--border); color: var(--text); background: var(--card); }
+  .btn-secondary:hover { border-color: var(--accent-2); }
 
-  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  .status-note {
+    margin-top: 28px; display: inline-block; font-size: 0.88rem; color: var(--muted);
+    border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; max-width: 760px;
+  }
+
+  /* stats */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: -34px; position: relative; z-index: 2; }
+  @media (max-width: 860px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .stats { grid-template-columns: 1fr; } }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow); }
+  .stat .num { font-size: 2rem; font-weight: 750; letter-spacing: -0.02em; line-height: 1.1; color: var(--accent-2); }
+  .stat .num small { font-size: 0.95rem; color: var(--muted); font-weight: 500; margin-left: 3px; }
+  .stat .lab { margin-top: 6px; font-size: 0.85rem; color: var(--muted); line-height: 1.4; }
+
+  section { padding: 68px 0; border-bottom: 1px solid var(--border); }
+  section.alt { background: var(--bg-alt); }
   section:last-of-type { border-bottom: none; }
-  h2 {
-    font-size: 1.6rem;
-    margin: 0 0 10px;
-  }
-  .section-sub { color: var(--muted); margin: 0 0 30px; max-width: 700px; }
+  .kicker { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  h2 { font-size: 1.8rem; margin: 0 0 10px; letter-spacing: -0.01em; }
+  .section-sub { color: var(--muted); margin: 0 0 32px; max-width: 720px; }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .grid.three { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 860px) { .grid.three { grid-template-columns: 1fr; } }
   @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
-
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 22px;
-  }
-  .card h3 {
-    margin: 0 0 8px;
-    font-size: 1.02rem;
-    color: var(--text);
-  }
-  .card .blocks {
-    display: inline-block;
-    font-size: 0.72rem;
-    letter-spacing: 0.03em;
-    color: var(--accent);
-    background: rgba(255,84,112,0.1);
-    border: 1px solid rgba(255,84,112,0.3);
-    border-radius: 999px;
-    padding: 2px 9px;
-    margin-bottom: 10px;
-  }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; }
+  .card h3 { margin: 0 0 8px; font-size: 1.05rem; }
   .card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+  .icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px;
+          background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+  .icon svg { width: 20px; height: 20px; }
+  .icon.teal { background: color-mix(in srgb, var(--accent-2) 14%, transparent); color: var(--accent-2); }
 
-  .why-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-  .why-list li {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px;
-    padding: 16px 18px;
-    color: var(--muted);
-  }
-  .why-list li strong { color: var(--text); }
+  /* flow */
+  .flow { display: grid; gap: 0; position: relative; }
+  .step { display: grid; grid-template-columns: 64px 1fr; gap: 18px; position: relative; padding-bottom: 20px; }
+  .step:last-child { padding-bottom: 0; }
+  .step::before { content: ""; position: absolute; left: 31px; top: 54px; bottom: -2px; width: 2px; background: linear-gradient(var(--accent-2), color-mix(in srgb, var(--accent-2) 10%, transparent)); }
+  .step:last-child::before { display: none; }
+  .badge { width: 64px; height: 54px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.04em;
+           background: var(--card-hi); border: 1px solid var(--border); color: var(--accent-2); }
+  .step.end .badge { color: var(--accent); }
+  .step .body { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; }
+  .step .body h3 { margin: 0 0 4px; font-size: 1.02rem; }
+  .step .body p { margin: 0; color: var(--muted); font-size: 0.93rem; }
+  .tag { display: inline-block; font-size: 0.72rem; letter-spacing: 0.03em; color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent);
+         border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 999px; padding: 2px 10px; margin-top: 10px; }
+  .tag.teal { color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 10%, transparent); border-color: color-mix(in srgb, var(--accent-2) 30%, transparent); }
+  .input-chip { display: inline-block; margin: 0 0 18px 82px; font-size: 0.82rem; color: var(--muted); }
+  @media (max-width: 520px) { .input-chip { margin-left: 0; } }
 
-  pre {
-    background: var(--bg-alt);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px;
-    overflow-x: auto;
-    font-size: 0.82rem;
-    color: #c8d3dd;
-  }
-  code {
-    background: rgba(63,215,194,0.12);
-    color: var(--accent-2);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.88em;
-  }
-  pre code { background: none; padding: 0; color: inherit; }
+  /* charts */
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; }
+  .chart-card h3 { margin: 0 0 4px; font-size: 1.05rem; }
+  .chart-card .cap { margin: 0 0 18px; color: var(--muted); font-size: 0.9rem; }
+  .hbar { display: grid; grid-template-columns: 74px 1fr 78px; gap: 12px; align-items: center; margin: 10px 0; font-size: 0.9rem; }
+  .hbar .track { position: relative; height: 16px; background: var(--track); border-radius: 999px; overflow: visible; }
+  .hbar .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent-2), color-mix(in srgb, var(--accent-2) 55%, #2fb8d9)); }
+  .hbar .val { text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
+  .marker { position: absolute; top: -6px; bottom: -6px; width: 0; border-left: 2px dashed var(--accent); }
+  .marker span { position: absolute; top: -22px; left: 6px; font-size: 0.72rem; color: var(--accent); white-space: nowrap; }
+  .scale { display: grid; grid-template-columns: 74px 1fr 78px; gap: 12px; margin-top: 2px; font-size: 0.72rem; color: var(--muted); }
+  .scale .ticks { position: relative; height: 16px; }
+  .scale .ticks span { position: absolute; top: 0; white-space: nowrap; }
 
-  .pipeline {
-    font-size: 0.8rem;
-    color: #c8d3dd;
-    line-height: 1.55;
-  }
+  .abl-row { display: grid; grid-template-columns: minmax(150px, 1.1fr) 2fr; gap: 14px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+  .abl-row:last-child { border-bottom: none; }
+  .abl-row .name { color: var(--text); }
+  .abl-row .name small { display: block; color: var(--muted); font-size: 0.78rem; }
+  .pair { display: grid; gap: 6px; }
+  .pair .line { display: grid; grid-template-columns: 112px 1fr 50px; gap: 8px; align-items: center; }
+  .pair .lbl { font-size: 0.74rem; color: var(--muted); }
+  .pair .bar { height: 10px; background: var(--track); border-radius: 999px; overflow: hidden; }
+  .pair .bar i { display: block; height: 100%; border-radius: 999px; }
+  .pair .full i { background: var(--good); min-width: 0; }
+  .pair .weak i { background: var(--bad); }
+  .pair .n { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.8rem; color: var(--text); }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); margin: 0 0 8px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  @media (max-width: 640px) { .abl-row { grid-template-columns: 1fr; gap: 6px; } .hbar, .scale { grid-template-columns: 54px 1fr 64px; } }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-  }
-  th, td {
-    text-align: left;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  th { color: var(--accent-2); font-weight: 600; }
+  /* tables, code */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  th { color: var(--accent-2); font-weight: 600; background: var(--card-hi); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; }
   td { color: var(--muted); }
-  td:first-child, th:first-child { color: var(--text); }
-  .table-wrap { overflow-x: auto; }
-  .status-ok { color: var(--accent-2); }
-  .status-pending { color: var(--muted); }
+  td:first-child { color: var(--text); font-weight: 500; }
+  td.res { color: var(--text); font-variant-numeric: tabular-nums; }
+  .pill { display: inline-block; font-size: 0.7rem; padding: 1px 8px; border-radius: 999px; margin-left: 8px; vertical-align: 1px; }
+  .pill.m { color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 12%, transparent); }
+  .pill.p { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
 
-  .disclosure {
-    font-size: 0.85rem;
-    color: var(--muted);
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin-bottom: 20px;
-  }
+  .disclosure { font-size: 0.88rem; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin-bottom: 22px; }
+  .disclosure strong { color: var(--text); }
 
-  .cite {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
+  .codebox { position: relative; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px; overflow-x: auto; font-size: 0.82rem; color: var(--text); margin: 0; }
+  pre code { background: none; padding: 0; color: inherit; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: color-mix(in srgb, var(--accent-2) 12%, transparent); color: var(--accent-2); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+  .copy { position: absolute; top: 10px; right: 10px; font-size: 0.75rem; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  .copy:hover { color: var(--text); border-color: var(--accent-2); }
 
-  .author-card { padding: 16px 18px; }
-  .author-card .name { color: var(--text); font-weight: 600; margin-bottom: 4px; }
-  .author-card .role { color: var(--muted); font-size: 0.88rem; margin-bottom: 4px; }
-  .author-card .email { font-size: 0.85rem; }
+  .goals { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media (max-width: 700px) { .goals { grid-template-columns: 1fr; } }
+  .goals li { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; color: var(--muted); font-size: 0.93rem; }
+  .goals li strong { display: block; color: var(--text); margin-bottom: 2px; }
 
-  footer {
-    padding: 40px 0 60px;
-    color: var(--muted);
-    font-size: 0.85rem;
-  }
+  .road { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .road li { display: flex; gap: 12px; align-items: flex-start; color: var(--muted); font-size: 0.93rem; }
+  .road .chk { flex: none; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 0.75rem; margin-top: 2px; }
+  .road .done .chk { background: color-mix(in srgb, var(--accent-2) 18%, transparent); color: var(--accent-2); }
+  .road .todo .chk { border: 1px solid var(--border); color: transparent; }
+  .road .done { color: var(--text); }
+
+  footer { padding: 42px 0 64px; color: var(--muted); font-size: 0.86rem; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; }
   footer a { color: var(--muted); }
   footer a:hover { color: var(--accent-2); }
 </style>
 </head>
 <body>
 
-<header class="hero">
+<nav class="top">
   <div class="wrap">
-    <span class="eyebrow">Open-source research framework</span>
-    <h1>Closing the chain-of-trust gap behind <span>biometric injection attacks</span></h1>
+    <a class="brand" href="#top"><img src="favicon.svg" alt="" width="26" height="26"> CRISP</a>
+    <div class="links">
+      <a href="#problem">Problem</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#results">Results</a>
+      <a href="#attacks">Attack tests</a>
+      <a href="#start">Quick start</a>
+      <a class="gh" href="https://github.com/sunilgentyala/crisp-framework">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="eyebrow">Open-source research prototype</span>
+    <h1>Prove where a biometric stream came from, <span>not just what it shows</span></h1>
     <p class="lede">
-      CRISP (Cryptographic Root-of-trust Identity and Sensor Provenance) is a four-component
-      framework that anchors biometric authentication to attested physical hardware. OS-level
-      injection tools — v4l2loopback, OBS Virtual Camera, LD_PRELOAD hooks — insert synthetic
-      deepfake video upstream of every liveness and presentation-attack check that exists today.
-      CRISP verifies the sensor itself, not just the stream it produces.
+      CRISP (Cryptographic Root-of-trust Identity and Sensor Provenance) defends biometric
+      authentication against injection attacks. It binds the capture path, the session, and the
+      enrollment record together with TPM attestation, a post-quantum hybrid channel, and
+      zero-knowledge matching, so a convincing deepfake is not enough to get through.
     </p>
     <div class="btn-row">
       <a class="btn btn-primary" href="https://github.com/sunilgentyala/crisp-framework">View on GitHub</a>
-      <a class="btn btn-secondary" href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/BENCHMARK_GUIDE.md">Benchmark Guide</a>
+      <a class="btn btn-secondary" href="#results">See the measurements</a>
+      <a class="btn btn-secondary" href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/BENCHMARK_GUIDE.md">Benchmark guide</a>
     </div>
+    <p class="status-note"><strong>Status:</strong> research prototype with component implementations and benchmarks. It is not a production authentication system and has not been evaluated end to end on deployment hardware.</p>
   </div>
 </header>
 
+<div class="wrap">
+  <div class="stats" aria-label="Headline measurements">
+    <div class="stat"><div class="num">0<small>/ 1,400</small></div><div class="lab">attack trials accepted by the attestation and channel checks (95% upper bound 3.6% per condition)</div></div>
+    <div class="stat"><div class="num">112<small>ms</small></div><div class="lab">hardware TPM 2.0 quote, P95 (Nuvoton TPM, one platform)</div></div>
+    <div class="stat"><div class="num">8.7<small>ms</small></div><div class="lab">software TPM quote, P95 (swtpm, a lower bound)</div></div>
+    <div class="stat"><div class="num">11.6<small>ms</small></div><div class="lab">post-quantum hybrid handshake overhead, P95 (x86 loopback)</div></div>
+  </div>
+</div>
+
 <section id="problem">
   <div class="wrap">
-    <h2>The problem</h2>
-    <p class="section-sub">Modern biometric authentication assumes sensor input can be trusted. It cannot.</p>
-    <ul class="why-list">
-      <li><strong>Injection bypasses PAD by design.</strong> Virtual-camera drivers and userspace hooks insert synthetic video directly into the OS media pipeline, upstream of every presentation-attack-detection and liveness check &mdash; ISO/IEC 30107-3 compliance offers zero protection against this attack class.</li>
-      <li><strong>The attack is surging.</strong> Injection attacks grew 9&times; year-over-year through 2024, as deepfake generation tools became commodity software.</li>
-      <li><strong>Spoofing the camera, not the face.</strong> These attacks impersonate the sensor itself rather than presenting a fake face to a real camera, which is the one thing liveness detection was never designed to catch.</li>
-    </ul>
-  </div>
-</section>
-
-<section id="architecture">
-  <div class="wrap">
-    <h2>CRISP architecture</h2>
-    <p class="section-sub">Four independent components sit between the physical sensor and the authentication decision. A stream is accepted only if all four pass.</p>
-    <pre class="pipeline"><code>Physical Sensor Hardware  &#9472;&#9472;[SHA-256 frame hash + session nonce]&#9472;&#9472;&#9656;
-    &#9474;
-    &#9660;
-SA:   TPM 2.0 Sensor Attestation          &#8592; Blocks driver injection (AC-2)
-    &#9474;   AIK-signed PCR quote                 Blocks virtual camera (AC-3)
-    &#9660;
-SET:  Post-Quantum Hybrid Telemetry       &#8592; Blocks SDK hook / LD_PRELOAD (AC-4)
-    &#9474;   X25519MLKEM768 + AES-256-GCM
-    &#9660;
-ZKBV: Zero-Knowledge Biometric Verify     &#8592; Template unlinkability, no replay
-    &#9474;   Groth16 / BCH(2047,1723) fuzzy commit
-    &#9660;
-BEM:  Behavioral Entropy Monitor          &#8592; Synthetic-stream anomaly detection
-    &#9474;   KL-divergence + spectral flatness
-    &#9660;
-Authentication Decision Module            &#8592; ACCEPT only if all four pass</code></pre>
-
-    <div class="grid" style="margin-top: 24px;">
+    <div class="kicker">The problem</div>
+    <h2>Most biometric systems trust the camera data they receive</h2>
+    <p class="section-sub">Presentation attack detection targets artifacts held up to a sensor. Injection attacks replace the stream inside the operating system, after the sensor and before the checks run.</p>
+    <div class="grid three">
       <div class="card">
-        <span class="blocks">Blocks AC-2, AC-3</span>
-        <h3>SA &middot; Sensor Attestation</h3>
-        <p>TPM 2.0-anchored attestation binds every frame to a hardware root of trust via an AIK-signed PCR quote, proving the data came from the physical sensor and not a driver-level or virtual-camera injection.</p>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M17 10l4-2v8l-4-2"/><path d="M8 12h4"/></svg></div>
+        <h3>The stream is replaced</h3>
+        <p>Virtual cameras (v4l2loopback, OBS Virtual Camera), malicious drivers, and library hooks feed synthetic video into the media pipeline as if it came from the sensor.</p>
       </div>
       <div class="card">
-        <span class="blocks">Blocks AC-4</span>
-        <h3>SET &middot; Secure Telemetry</h3>
-        <p>An X25519MLKEM768 post-quantum hybrid handshake plus AES-256-GCM protects the sensor-to-verifier channel, closing off SDK hooking and LD_PRELOAD interception even against a future quantum adversary.</p>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Detectors chase the generator</h3>
+        <p>Deepfake and liveness detectors judge what a stream looks like. They are trained on generators they have seen, and they cannot say where the pixels originated.</p>
       </div>
       <div class="card">
-        <span class="blocks">Template unlinkability</span>
-        <h3>ZKBV &middot; ZK Biometric Verify</h3>
-        <p>A Groth16 zkSNARK over a BCH(2047,1723) fuzzy commitment proves a biometric match without ever transmitting the underlying template, eliminating replay and cross-database linkability.</p>
-      </div>
-      <div class="card">
-        <span class="blocks">Novel synthesis variants</span>
-        <h3>BEM &middot; Entropy Monitor</h3>
-        <p>KL-divergence and spectral-flatness analysis over the live stream catch synthetic-generation artifacts that attestation and channel security alone can't &mdash; the last line of defense against novel deepfake variants.</p>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>CRISP changes the question</h3>
+        <p>Instead of out-detecting the attacker, the verifier rejects any stream that cannot show fresh, hardware-backed evidence from an approved capture path.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="benchmarks">
+<section id="architecture" class="alt">
   <div class="wrap">
-    <h2>Benchmark results</h2>
+    <div class="kicker">Architecture</div>
+    <h2>Four components between the sensor and the decision</h2>
+    <p class="section-sub">Each component answers a different question. The decision module accepts only if every mandatory check passes, and any missing, stale, or unverifiable evidence causes rejection.</p>
+    <div class="input-chip mono">sensor frames + frame hash + verifier session nonce</div>
+    <div class="flow">
+      <div class="step">
+        <div class="badge">SA</div>
+        <div class="body">
+          <h3>Sensor Attestation</h3>
+          <p>A TPM 2.0 attestation key signs a quote over the frame data and the session nonce, so the verifier can tell evidence from an approved sensor key from evidence anyone else produced.</p>
+          <span class="tag">Targets virtual cameras and driver replacement</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="badge">SET</div>
+        <div class="body">
+          <h3>Secure Telemetry</h3>
+          <p>An X25519MLKEM768 hybrid key exchange feeds an AES-256-GCM channel whose associated data binds each message to its position in the session.</p>
+          <span class="tag">Targets tampering, replay, and reordering in transit</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="badge">ZKBV</div>
+        <div class="body">
+          <h3>Zero-Knowledge Biometric Verification</h3>
+          <p>A Groth16 proof shows that a probe is close to an enrolled template, so no raw template leaves the device.</p>
+          <span class="tag teal">Template privacy</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="badge">BEM</div>
+        <div class="body">
+          <h3>Behavioral Entropy Monitor</h3>
+          <p>KL divergence and spectral flatness over frame windows give a statistical signal for synthetic streams. It is an optional risk signal, not a cryptographic guarantee.</p>
+          <span class="tag teal">Statistical signal</span>
+        </div>
+      </div>
+      <div class="step end">
+        <div class="badge">OK?</div>
+        <div class="body">
+          <h3>Decision module</h3>
+          <p>Accept only when every mandatory check succeeds. Fail closed otherwise.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <div class="kicker">Measurements</div>
+    <h2>What has been measured so far</h2>
+    <p class="section-sub">Component and protocol-level results from the real implementation, with their limits stated next to them.</p>
+
     <div class="disclosure">
-      <strong>Disclosure:</strong> SA results use swtpm 0.7 (software emulator) &mdash; a performance <em>lower bound</em>. Dedicated hardware TPMs (Infineon SLB 9672) are expected to yield 80&ndash;180 ms P95 due to SPI bus overhead. SET results are from x86-64 loopback; ARM Cortex-A76 is expected to run 1.5&ndash;2&times; higher. SA/SET rejection and BEM APCER/BPCER below are <em>measured</em> against the real (not mocked) implementation &mdash; see <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/sa_rejection_test.py">sa_rejection_test.py</a> and <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/prepare_bem_dataset.py">prepare_bem_dataset.py</a>. BEM's APCER/BPCER figure is a small-sample result (15 base images / 29 sliding windows per class, LFW vs. OpenRL/DeepFakeFace) confirming real separating signal, not a population-scale deployment estimate.
+      <strong>Read these with their limits.</strong> The software-TPM numbers are a lower bound. The hardware-TPM number comes from one laptop and includes Windows driver overhead. The handshake overhead is an x86 loopback figure with no network. Groth16 proving was measured on x86 only and is preliminary. BEM error rates come from a small sample (29 sliding windows per class) and are a signal check, not a deployment estimate. Mobile, ARM, and live-subject results do not exist yet.
     </div>
+
+    <div class="chart-card" style="margin-bottom: 22px;">
+      <h3>Hardware TPM quote latency</h3>
+      <p class="cap">TPM2_Quote over PCRs 0, 1, 7, 100 trials on a Nuvoton TPM 2.0. Per-frame quoting does not fit a 30 fps frame interval, which is why CRISP attests a batch of frames per quote.</p>
+      <div style="position: relative;">
+        <div class="hbar"><span>P50</span><div class="track"><div class="fill" style="width: 65.6%"></div><div class="marker" style="left: 25.6%"><span>30 fps frame: 33 ms</span></div></div><span class="val mono">85.3 ms</span></div>
+        <div class="hbar"><span>P95</span><div class="track"><div class="fill" style="width: 86%"></div><div class="marker" style="left: 25.6%"></div></div><span class="val mono">111.9 ms</span></div>
+        <div class="hbar"><span>P99</span><div class="track"><div class="fill" style="width: 94.7%"></div><div class="marker" style="left: 25.6%"></div></div><span class="val mono">123.1 ms</span></div>
+        <div class="scale"><span></span><div class="ticks mono"><span style="left:0%">0</span><span style="left:30.8%">40</span><span style="left:61.5%">80</span><span style="left:100%;transform:translateX(-100%)">130 ms</span></div><span></span></div>
+      </div>
+    </div>
+
     <div class="table-wrap">
       <table>
         <thead><tr><th>Component</th><th>Metric</th><th>Platform</th><th>Result</th></tr></thead>
         <tbody>
-          <tr><td>SA</td><td>TPM quote P95</td><td>x86-64, swtpm 0.7</td><td class="status-ok">8.7 ms</td></tr>
-          <tr><td>SA</td><td>TPM quote P95 (hardware est.)</td><td>Infineon SLB 9672</td><td>80&ndash;180 ms</td></tr>
-          <tr><td>SA/SET</td><td>Real attack rejection (AC-2/3/4)</td><td>x86-64, swtpm</td><td class="status-ok">0/60 forgeries accepted</td></tr>
-          <tr><td>SA</td><td>Bona fide acceptance (BPCER)</td><td>x86-64, swtpm</td><td class="status-ok">20/20</td></tr>
-          <tr><td>SET</td><td>Handshake overhead P95 &Delta;</td><td>x86-64 loopback</td><td class="status-ok">11.6 ms</td></tr>
-          <tr><td>SA + SET combined</td><td>Total overhead P95</td><td>x86-64</td><td class="status-ok">20.3 ms</td></tr>
-          <tr><td>ZKBV</td><td>Groth16 proving time</td><td>ARM Cortex-A76</td><td class="status-pending">Pending</td></tr>
-          <tr><td>ZKBV</td><td>Groth16 verification time</td><td>x86-64</td><td class="status-ok">~2 ms</td></tr>
-          <tr><td>BEM</td><td>Per-frame latency P95</td><td>x86-64 (WSL2)</td><td class="status-ok">10.05 ms</td></tr>
-          <tr><td>BEM</td><td>APCER / BPCER (D-EER)</td><td>LFW vs. OpenRL/DeepFakeFace</td><td class="status-ok">0.00% / 0.00% (n=29/class)</td></tr>
-          <tr><td>End-to-end</td><td>Auth latency target (P95)</td><td>ARM Cortex-A76</td><td>&lt; 47 ms target</td></tr>
+          <tr><td>SA</td><td>TPM quote P95</td><td>x86-64, swtpm 0.7</td><td class="res">8.7 ms <span class="pill m">measured</span></td></tr>
+          <tr><td>SA</td><td>TPM quote P50 / P95 / P99</td><td>Hardware TPM 2.0 (Nuvoton)</td><td class="res">85 / 112 / 123 ms <span class="pill m">measured</span></td></tr>
+          <tr><td>SET</td><td>Handshake overhead P95 (hybrid minus classical)</td><td>x86-64 loopback</td><td class="res">11.6 ms <span class="pill m">measured</span></td></tr>
+          <tr><td>SA + SET</td><td>Combined overhead P95</td><td>x86-64</td><td class="res">20.3 ms <span class="pill m">measured</span></td></tr>
+          <tr><td>ZKBV</td><td>Groth16 verification</td><td>x86-64</td><td class="res">about 2 ms <span class="pill m">measured</span></td></tr>
+          <tr><td>ZKBV</td><td>Groth16 proving P95</td><td>x86-64 (Zen 4 class)</td><td class="res">about 390 ms <span class="pill p">preliminary</span></td></tr>
+          <tr><td>ZKBV</td><td>Groth16 proving</td><td>ARM hardware</td><td class="res">Pending <span class="pill p">not measured</span></td></tr>
+          <tr><td>BEM</td><td>Per-frame latency P95</td><td>x86-64 (WSL2)</td><td class="res">10.05 ms <span class="pill m">measured</span></td></tr>
+          <tr><td>BEM</td><td>APCER / BPCER</td><td>LFW vs. OpenRL/DeepFakeFace, 29 windows per class</td><td class="res">0.00% / 0.00% <span class="pill p">small sample</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="section-sub" style="margin-top: 20px;">Measured serial total so far (SA + SET + ZKBV verify + BEM) is <strong style="color: var(--text);">~32.4 ms</strong> of the 47&nbsp;ms end-to-end target on x86-64 &mdash; a much smaller margin than an earlier unverified BEM estimate (~1.3&nbsp;ms) implied. Treat the 47&nbsp;ms target as <strong style="color: var(--text);">at risk</strong> pending ARM Cortex-A76 measurement of all four components, not comfortably met.</p>
   </div>
 </section>
 
-<section id="security">
+<section id="attacks" class="alt">
   <div class="wrap">
-    <h2>Security properties</h2>
-    <p class="section-sub">Formal guarantees underpinning the framework, with their cryptographic reduction.</p>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Property</th><th>Definition</th><th>Reduction</th></tr></thead>
-        <tbody>
-          <tr><td>Sensor Binding (SG-1)</td><td>Auth module can verify data came from an attested physical sensor</td><td>ECDSA unforgeability</td></tr>
-          <tr><td>Template Unlinkability (SG-2)</td><td>No biometric template traverses any external boundary</td><td>DDH over Groth16 bilinear group</td></tr>
-          <tr><td>Injection Resistance (SG-3)</td><td>No PPT adversary causes acceptance of a fabricated stream except with negligible probability</td><td>Theorem 1 (ROM)</td></tr>
-          <tr><td>Freshness (SG-4)</td><td>Attestation quotes are bound to session nonces; no replay</td><td>Nonce uniqueness</td></tr>
-        </tbody>
-      </table>
+    <div class="kicker">Attack tests</div>
+    <h2>Fourteen attacks, 100 trials each</h2>
+    <p class="section-sub">The real attestation and channel code, run against forged, replayed, substituted, and tampered inputs. None of the 1,400 attack trials was accepted, and all 200 genuine trials were. The ablation shows which check blocks which attack.</p>
+
+    <div class="chart-card">
+      <h3>Attestation attacks accepted, out of 100</h3>
+      <p class="cap">Full verifier (frame hash, nonce, and TPM signature) versus a weaker verifier that checks only the hash and nonce.</p>
+      <div class="legend"><span><i style="background: var(--good)"></i>Full verifier</span><span><i style="background: var(--bad)"></i>Hash and nonce only</span></div>
+
+      <div class="abl-row"><div class="name">A1 No quote<small>empty attestation fields</small></div><div class="pair"><div class="line full"><span class="lbl">Full</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div><div class="line weak"><span class="lbl">Hash + nonce</span><div class="bar"><i style="width:100%"></i></div><span class="n mono">100</span></div></div></div>
+      <div class="abl-row"><div class="name">A2 Forged signature<small>random bytes, correct hash and nonce</small></div><div class="pair"><div class="line full"><span class="lbl">Full</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div><div class="line weak"><span class="lbl">Hash + nonce</span><div class="bar"><i style="width:100%"></i></div><span class="n mono">100</span></div></div></div>
+      <div class="abl-row"><div class="name">A3 Uncertified key<small>valid quote from the attacker's own key</small></div><div class="pair"><div class="line full"><span class="lbl">Full</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div><div class="line weak"><span class="lbl">Hash + nonce</span><div class="bar"><i style="width:100%"></i></div><span class="n mono">100</span></div></div></div>
+      <div class="abl-row"><div class="name">A4 Cross-session replay<small>genuine quote from an earlier session</small></div><div class="pair"><div class="line full"><span class="lbl">Full</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div><div class="line weak"><span class="lbl">Hash + nonce</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div></div></div>
+      <div class="abl-row"><div class="name">A5 Frame substitution<small>genuine quote, injected frame</small></div><div class="pair"><div class="line full"><span class="lbl">Full</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div><div class="line weak"><span class="lbl">Hash + nonce</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div></div></div>
+      <div class="abl-row"><div class="name">A6 Relabeled fields<small>hash and nonce rewritten on a genuine quote</small></div><div class="pair"><div class="line full"><span class="lbl">Full</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div><div class="line weak"><span class="lbl">Hash + nonce</span><div class="bar"><i style="width:100%"></i></div><span class="n mono">100</span></div></div></div>
+      <div class="abl-row"><div class="name">A7 Quote blob bit flip<small>one bit changed</small></div><div class="pair"><div class="line full"><span class="lbl">Full</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div><div class="line weak"><span class="lbl">Hash + nonce</span><div class="bar"><i style="width:100%"></i></div><span class="n mono">100</span></div></div></div>
+      <div class="abl-row"><div class="name">A8 Signature bit flip<small>one bit changed</small></div><div class="pair"><div class="line full"><span class="lbl">Full</span><div class="bar"><i style="width:0%"></i></div><span class="n mono">0</span></div><div class="line weak"><span class="lbl">Hash + nonce</span><div class="bar"><i style="width:100%"></i></div><span class="n mono">100</span></div></div></div>
     </div>
-    <pre style="margin-top: 20px;"><code>Adv_BIA(A, &lambda;) &le; Adv_ECDSA(A) + Adv_ZK-Sound(A) + &epsilon;_BEM + negl(&lambda;)</code></pre>
+
+    <div class="grid" style="margin-top: 16px;">
+      <div class="card">
+        <h3>Channel attacks: 0 of 600 accepted</h3>
+        <p>Ciphertext and tag bit flips, replay of an accepted frame, frame reordering, truncation, and decryption under a wrong session key were all rejected, 100 trials each.</p>
+      </div>
+      <div class="card">
+        <h3>What this does and does not show</h3>
+        <p>It is a protocol-level soundness check with a software TPM and demo certificates. It does not measure biometric accuracy or liveness, and it does not cover an adaptive attacker with access to the sensor or the TPM.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<section id="start">
+<section id="goals">
   <div class="wrap">
-    <h2>Quick start</h2>
-    <p class="section-sub">Reproduce the SA (TPM attestation) benchmark. See the <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/BENCHMARK_GUIDE.md">Benchmark Guide</a> for SET, ZKBV, and full prerequisites.</p>
-    <pre><code>sudo apt install -y swtpm tpm2-tools python3-pip
+    <div class="kicker">Design goals</div>
+    <h2>What the prototype is built to provide</h2>
+    <p class="section-sub">These are design goals. The measurements above test components of them and are not a security proof.</p>
+    <ul class="goals">
+      <li><strong>Sensor binding</strong>Accepted data should originate from an attested capture path.</li>
+      <li><strong>Freshness</strong>Evidence is bound to a single-use session nonce, so old evidence cannot be replayed.</li>
+      <li><strong>Template privacy</strong>Biometric templates stay on the device. Only a proof is sent.</li>
+      <li><strong>Fail closed</strong>Missing, stale, malformed, or unverifiable evidence causes rejection.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="start" class="alt">
+  <div class="wrap">
+    <div class="kicker">Quick start</div>
+    <h2>Reproduce the benchmarks</h2>
+    <p class="section-sub">Start with the SA (TPM attestation) benchmark. The <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/benchmarks/BENCHMARK_GUIDE.md">benchmark guide</a> covers SET, ZKBV, the attack matrix, and full prerequisites.</p>
+    <div class="codebox">
+      <button class="copy" type="button" aria-label="Copy commands">Copy</button>
+<pre><code>sudo apt install -y swtpm tpm2-tools python3-pip
 pip install -r requirements.txt
 
 mkdir -p /tmp/vtpm
@@ -345,16 +458,51 @@ export TPM2TOOLS_TCTI="swtpm:path=/tmp/vtpm/sock"
 tpm2_createprimary -C e -c /tmp/vtpm/primary.ctx
 tpm2_evictcontrol -C o -c /tmp/vtpm/primary.ctx 0x81000001
 
-python3 benchmarks/tpm_bench.py</code></pre>
+python3 benchmarks/tpm_bench.py
+python3 benchmarks/sa_set_attack_matrix.py 100</code></pre>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <div class="kicker">Roadmap</div>
+    <h2>Done and still open</h2>
+    <p class="section-sub">Open items are real gaps, not formalities.</p>
+    <ul class="road">
+      <li class="done"><span class="chk">&#10003;</span>SA, SET, ZKBV, and BEM component implementations</li>
+      <li class="done"><span class="chk">&#10003;</span>Attack matrix with ablation across 14 conditions</li>
+      <li class="done"><span class="chk">&#10003;</span>Hardware TPM quote latency on one platform</li>
+      <li class="todo"><span class="chk">&#10003;</span>Trusted capture implementation (protected sensor path)</li>
+      <li class="todo"><span class="chk">&#10003;</span>ZKBV proving and SET benchmarks on ARM hardware</li>
+      <li class="todo"><span class="chk">&#10003;</span>Larger BEM evaluation with genuine video capture and several synthesis methods</li>
+      <li class="todo"><span class="chk">&#10003;</span>Live-subject accuracy evaluation</li>
+      <li class="todo"><span class="chk">&#10003;</span>Reproducible Docker environment and CI for benchmark regression</li>
+    </ul>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    CRISP &middot; MIT License &middot; Sunil Gentyala &middot;
-    <a href="https://github.com/sunilgentyala/crisp-framework">GitHub</a>
+    <div class="row">
+      <span>CRISP &middot; MIT License &middot; Sunil Gentyala</span>
+      <span><a href="https://github.com/sunilgentyala/crisp-framework">GitHub</a> &middot; <a href="https://github.com/sunilgentyala/crisp-framework/blob/main/SECURITY.md">Security policy</a> &middot; <a href="https://github.com/sunilgentyala/crisp-framework/issues">Issues</a></span>
+    </div>
   </div>
 </footer>
+
+<script>
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = btn.parentElement.querySelector('pre code');
+      if (!code || !navigator.clipboard) return;
+      navigator.clipboard.writeText(code.innerText).then(function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+      });
+    });
+  });
+</script>
 
 </body>
 </html>

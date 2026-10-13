@@ -200,21 +200,50 @@ python3 benchmarks/bem_bench.py \
   --iterations 1000
 ```
 
-> **Target:** BEM per-frame processing < 2 ms at P95 (ensuring it fits within the
-> overall 47 ms end-to-end latency budget without blocking the authentication path).
+> **Note:** the measured BEM per-frame P95 on x86-64 is about 10 ms (see `results/bem_results.txt`).
 
 ---
 
-## Hardware Disclosure
+## Attack matrix (SA and SET)
 
-All benchmark headline figures carry explicit hardware disclosure. A summary:
+Runs 8 attestation attacks and 6 channel attacks, 100 trials each, against the real
+`src/sa` and `src/set` code, plus an ablation with weaker verifiers. Requires the
+software TPM from the SA quick start to be running (see the README).
 
-| Benchmark | Platform Used | Known Limitation | Paper Disclosure |
-|-----------|--------------|-----------------|-----------------|
-| SA (TPM) | x86-64, swtpm 0.7 | Software emulator; hardware TPM 10–20× slower | §VI, tpm_results.txt |
-| SET | x86-64, loopback | Loopback ≠ production network; ARM 1.5–2× higher | §VI, set_results.txt |
-| ZKBV | x86-64 (verification) | Proving time on ARM Cortex-A76 not yet measured | §VII open item |
-| BEM | — | Not yet measured | §VII open item |
+```bash
+python3 benchmarks/sa_set_attack_matrix.py 100
+```
 
-See individual `*_results.txt` files in `benchmarks/results/` for complete raw output
-and disclosure statements as they appear in the submitted paper.
+Output reports accepted, rejected, and error counts per condition and exact
+Clopper-Pearson 95% intervals. Raw output: `results/attack_matrix_results.txt`.
+
+---
+
+## Hardware TPM quote latency (Windows)
+
+Measures `TPM2_Quote` on a real TPM 2.0 through the Windows TPM Base Services API.
+No external tools or admin rights are needed; it creates a volatile key in the NULL
+hierarchy.
+
+```powershell
+python benchmarks	pm_hw_quote_windows.py 100
+```
+
+Raw output: `results/tpm_hw_results.txt`. Timing includes driver overhead and is specific
+to the machine it runs on.
+
+---
+
+## Platform and limitations
+
+| Benchmark | Platform used | Known limitation |
+|-----------|---------------|------------------|
+| SA (software TPM) | x86-64, swtpm 0.7 | Software emulator, so a lower bound |
+| SA (hardware TPM) | Windows laptop, Nuvoton TPM 2.0 | One platform; includes driver overhead |
+| SET | x86-64 loopback | Loopback is not a production network; ARM expected slower |
+| ZKBV | x86-64 | Proving is preliminary; ARM proving not yet measured |
+| BEM | x86-64 (WSL2) | Small sample; not a deployment-grade error estimate |
+| Attack matrix | x86-64, swtpm | Protocol-level only; demo certificates; no adaptive adversary |
+
+See the `*_results.txt` files in `benchmarks/results/` for complete raw output and
+disclosure statements.

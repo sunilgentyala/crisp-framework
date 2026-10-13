@@ -1,0 +1,81 @@
+CRISP Benchmark 6: SA/SET Attack Matrix and Ablation
+=====================================================
+Date        : 2026-10-13
+Platform    : x86-64 (WSL2 Ubuntu 24.04), swtpm 0.7.3, tpm2-tools 5.6
+Script      : benchmarks/sa_set_attack_matrix.py (n=100 trials per condition)
+
+Scope and limitations:
+  Protocol-level behavior of src/sa and src/set against genuine and
+  adversarial inputs, with a fresh nonce and frame per trial. This is not a
+  biometric accuracy measurement, not a liveness test, and not an evaluation
+  against an adaptive adversary with access to the sensor or the TPM.
+  A condition counts as "rejected" only when the verifier returned False or
+  raised its documented rejection error; any other exception is reported
+  separately as "error" (none occurred). AIK certificates in this run are self-signed
+  demo certificates; the verifier trusts the pinned sensor public key. The hash+nonce and none columns are
+  ablations showing what each check contributes. Intervals are exact
+  Clopper-Pearson 95% bounds.
+
+Raw output:
+-----------
+/mnt/c/Gitrepos/crisp-framework/src/sa/provisioning.py:134: UserWarning: Using self-signed AIK certificate (demo mode). Production deployments require CA-signed certificates. See docs/sensor-provisioning.md for the CA signing workflow.
+  self._generate_demo_cert(aik_pub, aik_cert, sensor_id)
+/mnt/c/Gitrepos/crisp-framework/src/sa/provisioning.py:134: UserWarning: Using self-signed AIK certificate (demo mode). Production deployments require CA-signed certificates. See docs/sensor-provisioning.md for the CA signing workflow.
+  self._generate_demo_cert(aik_pub, aik_cert, sensor_id)
+CRISP SA/SET attack matrix, n=100 trials per condition
+==================================================================
+
+SA conditions: outcomes per verifier configuration
+  bona fide (should accept)            full: acc=100 rej=  0 err= 0 | hash+nonce acc=100 | none acc=100
+  A1 no quote                          full: acc=  0 rej=100 err= 0 | hash+nonce acc=100 | none acc=100
+  A2 forged signature bytes            full: acc=  0 rej=100 err= 0 | hash+nonce acc=100 | none acc=100
+  A3 valid quote, uncertified AIK      full: acc=  0 rej=100 err= 0 | hash+nonce acc=100 | none acc=100
+  A4 cross-session replay              full: acc=  0 rej=100 err= 0 | hash+nonce acc=  0 | none acc=100
+  A5 frame substitution                full: acc=  0 rej=100 err= 0 | hash+nonce acc=  0 | none acc=100
+  A6 relabeled quote fields            full: acc=  0 rej=100 err= 0 | hash+nonce acc=100 | none acc=100
+  A7 quote blob 1-bit flip             full: acc=  0 rej=100 err= 0 | hash+nonce acc=100 | none acc=100
+  A8 signature 1-bit flip              full: acc=  0 rej=100 err= 0 | hash+nonce acc=100 | none acc=100
+
+SET conditions (AES-256-GCM channel, counter-bound AAD)
+  bona fide (should accept)            acc=100 rej=  0 err= 0
+  S1 ciphertext 1-bit flip             acc=  0 rej=100 err= 0
+  S2 tag 1-bit flip                    acc=  0 rej=100 err= 0
+  S3 replay of accepted frame          acc=  0 rej=100 err= 0
+  S4 frame reorder                     acc=  0 rej=100 err= 0
+  S5 truncated ciphertext              acc=  0 rej=100 err= 0
+  S6 wrong session key                 acc=  0 rej=100 err= 0
+
+==================================================================
+SUMMARY (attack acceptance, exact Clopper-Pearson 95% CI)
+==================================================================
+  bona fide (should accept)            accepted 100/100 (100.0%, 95% CI 96.38-100.00%)
+
+Full verifier, attacks accepted:
+  A1 no quote                          0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  A2 forged signature bytes            0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  A3 valid quote, uncertified AIK      0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  A4 cross-session replay              0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  A5 frame substitution                0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  A6 relabeled quote fields            0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  A7 quote blob 1-bit flip             0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  A8 signature 1-bit flip              0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+
+Ablation, attacks accepted by 'hash+nonce' verifier (no signature check):
+  A1 no quote                          100/100 (100.0%, 95% CI 96.38-100.00%)
+  A2 forged signature bytes            100/100 (100.0%, 95% CI 96.38-100.00%)
+  A3 valid quote, uncertified AIK      100/100 (100.0%, 95% CI 96.38-100.00%)
+  A4 cross-session replay              0/100 (0.0%, 95% CI 0.00-3.62%)
+  A5 frame substitution                0/100 (0.0%, 95% CI 0.00-3.62%)
+  A6 relabeled quote fields            100/100 (100.0%, 95% CI 96.38-100.00%)
+  A7 quote blob 1-bit flip             100/100 (100.0%, 95% CI 96.38-100.00%)
+  A8 signature 1-bit flip              100/100 (100.0%, 95% CI 96.38-100.00%)
+
+SET, attacks accepted:
+  bona fide (should accept)            accepted 100/100 (100.0%, 95% CI 96.38-100.00%)
+  S1 ciphertext 1-bit flip             0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  S2 tag 1-bit flip                    0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  S3 replay of accepted frame          0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  S4 frame reorder                     0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  S5 truncated ciphertext              0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+  S6 wrong session key                 0/100 (0.0%, 95% CI 0.00-3.62%)   errors=0
+exit=0

@@ -68,6 +68,8 @@ crisp-framework/
 │   ├── bem_bench.py             # BEM: entropy monitor throughput and error rates
 │   ├── prepare_bem_dataset.py   # Downloads authentic and synthetic frame sets for BEM
 │   ├── sa_rejection_test.py     # SA/SET: protocol-level forged-input rejection test
+│   ├── sa_set_attack_matrix.py  # SA/SET: 14 attack conditions, 100 trials each, with ablation
+│   ├── tpm_hw_quote_windows.py  # SA: hardware TPM quote latency on Windows (TBS)
 │   └── results/                 # Raw output from each benchmark
 ├── src/
 │   ├── sa/                      # Sensor attestation module
@@ -86,13 +88,14 @@ crisp-framework/
 
 ## Benchmark Results Summary
 
-> **Disclosure:** SA results use swtpm 0.7, a software TPM emulator, so they are a performance **lower bound**. Dedicated hardware TPMs are expected to be slower because of bus overhead. SET results come from an x86-64 loopback and say nothing about wide-area latency. ZKBV proving was measured on x86-64 only and is preliminary.
+> **Disclosure:** the swtpm results are a software-emulator **lower bound**. The hardware TPM figure comes from one laptop and includes Windows driver overhead. SET results come from an x86-64 loopback and say nothing about wide-area latency. ZKBV proving was measured on x86-64 only and is preliminary.
 
 | Component | Metric | Platform | Result |
 |-----------|--------|----------|--------|
 | **SA** | TPM quote P95 | x86-64, swtpm 0.7 | 8.7 ms |
-| **SA/SET** | Forged or unattested inputs rejected | x86-64, swtpm | 0 of 60 accepted (20 trials per condition) |
-| **SA** | Genuine attested inputs accepted | x86-64, swtpm | 20 of 20 |
+| **SA** | TPM quote P50 / P95 / P99 | Hardware TPM 2.0 (Nuvoton), Windows | 85 / 112 / 123 ms (100 trials, one platform) |
+| **SA/SET** | Attack matrix: 14 conditions, 100 trials each | x86-64, swtpm | 0 of 1,400 attacks accepted (95% upper bound 3.6% per condition); 200 of 200 genuine accepted |
+| **SA** | Ablation: hash and nonce check only (no signature check) | x86-64, swtpm | accepts 6 of 8 attestation attacks in every trial |
 | **SET** | Handshake overhead P95 (hybrid minus classical) | x86-64 loopback | 11.6 ms |
 | **SA + SET** | Combined overhead P95 | x86-64 | 20.3 ms |
 | **ZKBV** | Groth16 verification | x86-64 | about 2 ms |
@@ -146,10 +149,11 @@ python3 benchmarks/set_bench.py
 ## Roadmap
 
 - [x] SA, SET, ZKBV, and BEM component implementations
-- [x] Protocol-level forged-input rejection test for SA and SET
+- [x] Attack matrix with ablation for SA and SET (14 conditions, 100 trials each)
+- [x] Hardware TPM quote latency on one platform
 - [x] BEM throughput and error-rate benchmark
 - [ ] ZKBV proving benchmark on ARM hardware
-- [ ] SA benchmark on a discrete hardware TPM
+- [ ] Hardware TPM results on more than one platform
 - [ ] SET benchmark on ARM hardware
 - [ ] Larger BEM evaluation with more identities, several synthesis methods, and genuine video capture
 - [ ] Trusted capture implementation (protected sensor path)
