@@ -3,7 +3,6 @@ CRISP Framework — Benchmark 1: TPM Quote Generation Latency
 ============================================================
 Paper: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
         Zero-Knowledge Verification Against Biometric Injection Attacks"
-Target Journal: IEEE Transactions on Information Forensics and Security
 
 Description:
     Measures TPM 2.0 attestation quote generation latency over 1,000

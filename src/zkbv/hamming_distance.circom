@@ -3,7 +3,6 @@
  * ============================================
  * Paper: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
  *         Zero-Knowledge Verification Against Biometric Injection Attacks"
- * IEEE Transactions on Information Forensics and Security, 2026
  *
  * Statement proven:
  *   ∃ probe[0..n-1] ∈ {0,1}^n such that:

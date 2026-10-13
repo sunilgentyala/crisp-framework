@@ -3,7 +3,6 @@ CRISP Framework — Benchmark 2: SET Channel Handshake Overhead
 =============================================================
 Paper: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
         Zero-Knowledge Verification Against Biometric Injection Attacks"
-Target Journal: IEEE Transactions on Information Forensics and Security
 
 Description:
     Measures the additional TLS 1.3 handshake latency introduced by

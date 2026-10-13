@@ -36,7 +36,7 @@ keywords:
   - post-quantum cryptography
   - eKYC
 preferred-citation:
-  type: conference-paper
+  type: unpublished
   authors:
     - family-names: "Gentyala"
       given-names: "Sunil"
@@ -51,7 +51,5 @@ preferred-citation:
       given-names: "Suresh Kumar"
   title: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound Zero-Knowledge Verification Against Biometric Injection Attacks"
   year: 2026
-  conference:
-    name: "2026 IEEE Technology and Engineering Management Conference -- Asia Pacific (TEMSCON-ASPAC)"
-  notes: "Paper #818, EDAS Paper ID: 1571328233. Manuscript submitted, decision pending."
+  notes: "Manuscript under review."
   url: "https://github.com/sunilgentyala/crisp-framework"
