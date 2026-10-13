@@ -12,7 +12,7 @@
 This repository accompanies the paper:
 
 > **CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound Zero-Knowledge Verification Against Biometric Injection Attacks**  
-> *Sunil Gentyala, Suresh Kumar Darisi, Manasa Pendyala, Floriano Caprio, Akhila Kasturi, Vamshi Lande.*  
+> *Sunil Gentyala, S. M. Krishna Reddy Padala, Vahiduddin Shariff, Akhila Kasturi, Suresh Kumar Darisi.*  
 > Submitted to the 2026 IEEE Technology & Engineering Management Conference -- Asia Pacific (TEMSCON-ASPAC), Special Track: Technology and Management. Paper #818 (EDAS Paper ID: 1571328233). Decision pending.
 
 CRISP is a four-component cryptographic framework that closes the hardware-to-authentication chain-of-trust gap exploited by OS-level biometric injection attacks — a class of attack that bypasses every existing liveness and presentation-attack detection mechanism by impersonating the camera itself rather than spoofing it.
@@ -183,8 +183,8 @@ Adv_BIA(A, λ) ≤ Adv_ECDSA(A) + Adv_ZK-Sound(A) + ε_BEM + negl(λ)
 
 ```bibtex
 @inproceedings{gentyala2026crisp,
-  author    = {Gentyala, Sunil and Darisi, Suresh Kumar and Pendyala, Manasa
-               and Caprio, Floriano and Kasturi, Akhila and Lande, Vamshi},
+  author    = {Gentyala, Sunil and Padala, S. M. Krishna Reddy and Shariff, Vahiduddin
+               and Kasturi, Akhila and Darisi, Suresh Kumar},
   title     = {CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound
                Zero-Knowledge Verification Against Biometric Injection Attacks},
   booktitle = {2026 IEEE Technology and Engineering Management Conference --

@@ -6,26 +6,22 @@ authors:
     email: sunil.gentyala@ieee.org
     affiliation: "HCLTech (HCL America Inc.), USA"
     orcid: "https://orcid.org/0009-0005-2642-3479"
-  - family-names: "Darisi"
-    given-names: "Suresh Kumar"
-    email: darisi.suresh@ieee.org
-    affiliation: "HCL, USA"
-  - family-names: "Pendyala"
-    given-names: "Manasa"
-    email: manasa.pendyala@oracle.com
-    affiliation: "Oracle, USA"
-  - family-names: "Caprio"
-    given-names: "Floriano"
-    email: floriano.caprio@hcltech.com
-    affiliation: "HCLTech, Italy"
+  - family-names: "Padala"
+    given-names: "S. M. Krishna Reddy"
+    email: krishna.padala@ieee.org
+    affiliation: "Aditya University, India"
+  - family-names: "Shariff"
+    given-names: "Vahiduddin"
+    email: shariff.v@gmail.com
+    affiliation: "Sir C R Reddy College of Engineering, India"
   - family-names: "Kasturi"
     given-names: "Akhila"
     email: kasturi.akhila@gmail.com
     affiliation: "India"
-  - family-names: "Lande"
-    given-names: "Vamshi"
-    email: vamshilande@my.unt.edu
-    affiliation: "University of North Texas, USA"
+  - family-names: "Darisi"
+    given-names: "Suresh Kumar"
+    email: darisi.suresh@ieee.org
+    affiliation: "HCL, USA"
 title: "CRISP: Cryptographic Root-of-trust Identity and Sensor Provenance"
 version: 1.0.0
 date-released: 2026-04-22
@@ -45,16 +41,14 @@ preferred-citation:
     - family-names: "Gentyala"
       given-names: "Sunil"
       orcid: "https://orcid.org/0009-0005-2642-3479"
-    - family-names: "Darisi"
-      given-names: "Suresh Kumar"
-    - family-names: "Pendyala"
-      given-names: "Manasa"
-    - family-names: "Caprio"
-      given-names: "Floriano"
+    - family-names: "Padala"
+      given-names: "S. M. Krishna Reddy"
+    - family-names: "Shariff"
+      given-names: "Vahiduddin"
     - family-names: "Kasturi"
       given-names: "Akhila"
-    - family-names: "Lande"
-      given-names: "Vamshi"
+    - family-names: "Darisi"
+      given-names: "Suresh Kumar"
   title: "CRISP: Hardware-Rooted Sensor Provenance and Enrollment-Bound Zero-Knowledge Verification Against Biometric Injection Attacks"
   year: 2026
   conference:
